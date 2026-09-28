@@ -1,0 +1,4 @@
+# Streamlit Community Cloud 배포용 (로컬 개발은 uv sync 사용)
+pydantic>=2.7
+streamlit>=1.40
+lark>=1.2
