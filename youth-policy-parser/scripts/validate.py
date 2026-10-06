@@ -1,7 +1,7 @@
 """data/policies/*.json 검증 스크립트.
 
 채팅으로 변환한 정책 파일은 반드시 이 스크립트를 통과해야 저장소에 넣는다.
-지금은 스키마(필드·형식)만 검사한다. 4회차에 문법이 확정되면 DSL 파싱 검사를 추가한다.
+검사 항목: 스키마(필드·형식), 파일 이름 = policy_id, DSL 문법·의미, 중복수혜 참조.
 
 실행: uv run python scripts/validate.py
 """
@@ -15,6 +15,7 @@ from pydantic import ValidationError
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
+from engine.parser import DSLError, parse  # noqa: E402
 from engine.schemas import Policy  # noqa: E402
 
 POLICY_DIR = ROOT / "data" / "policies"
@@ -43,8 +44,16 @@ def validate_all() -> int:
             failures += 1
             print(f"❌ {path.name}: policy_id 중복 ({seen_ids[policy.policy_id].name})\n")
             continue
+        # DSL이 있으면 파서로 검사한다. 문법 오류가 있는 데이터는 저장소에 들어오면 안 된다.
+        if policy.condition_dsl:
+            try:
+                parse(policy.condition_dsl)
+            except DSLError as e:
+                failures += 1
+                print(f"❌ {path.name}: DSL 오류\n{e}\n")
+                continue
         seen_ids[policy.policy_id] = path
-        status = "DSL 있음" if policy.condition_dsl else "DSL 없음 → 확인 필요"
+        status = "DSL 통과" if policy.condition_dsl else "DSL 없음 → 확인 필요"
         print(f"✅ {path.name} ({status})")
 
     # exclusive_with가 존재하지 않는 정책을 가리키면 최적 조합 계산이 틀어진다.

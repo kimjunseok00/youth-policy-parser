@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+.idea/
+.vscode/
+.DS_Store
+# API 키 등 비밀값은 절대 커밋하지 않는다
+.env
+.streamlit/secrets.toml
