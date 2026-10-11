@@ -1,0 +1,52 @@
+[
+  {
+    "label": "부산진구 구직 청년",
+    "scenario": "대학 졸업 후 구직 중. 국민취업지원제도와 청년도전지원사업이 중복수혜 불가라 최적 조합이 하나를 고른다.",
+    "profile": {
+      "birth_date": "2001-03-15", "sido": "부산광역시", "sigungu": "부산진구",
+      "residence_since": "2023-02-01", "education": "대학졸업", "employment": "구직중",
+      "personal_income_monthly": 0, "household_size": 3, "household_income_monthly": 4500000,
+      "current_benefits": []
+    }
+  },
+  {
+    "label": "해운대구 재직 청년",
+    "scenario": "중소기업 재직, 청년도약계좌 가입 중. 자산형성 정책은 대부분 기간이 지났거나 중복 가입 제한에 걸린다.",
+    "profile": {
+      "birth_date": "1996-11-20", "sido": "부산광역시", "sigungu": "해운대구",
+      "residence_since": "2021-06-01", "education": "대학졸업", "employment": "재직",
+      "personal_income_monthly": 2800000, "household_size": 2, "household_income_monthly": 5000000,
+      "current_benefits": ["청년도약계좌"]
+    }
+  },
+  {
+    "label": "34세 생일 직전 구직자",
+    "scenario": "경계선 케이스. 2026-10-20에 만 35세가 되면 연령 상한(34세)인 정책들을 잃는다 → 일정 탭에 '자격 상실'이 뜬다.",
+    "profile": {
+      "birth_date": "1991-10-20", "sido": "부산광역시", "sigungu": "사하구",
+      "residence_since": "2019-04-01", "education": "고졸", "employment": "미취업",
+      "personal_income_monthly": 0, "household_size": 1, "household_income_monthly": 1500000,
+      "current_benefits": []
+    }
+  },
+  {
+    "label": "저소득 근로 청년",
+    "scenario": "경계선 케이스. 1인 가구 월 120만 원 = 기준중위소득 약 46.8%로, 청년내일저축계좌 기준(50%) 바로 아래.",
+    "profile": {
+      "birth_date": "2004-07-02", "sido": "부산광역시", "sigungu": "동래구",
+      "residence_since": "2024-03-01", "education": "고졸", "employment": "재직",
+      "personal_income_monthly": 1200000, "household_size": 1, "household_income_monthly": 1200000,
+      "current_benefits": []
+    }
+  },
+  {
+    "label": "서울 거주 20세 대학생",
+    "scenario": "부산 정책 대상이 아니다. '이것만 바꾸면'이 부산 전입 시 늘어나는 정책을 보여준다.",
+    "profile": {
+      "birth_date": "2006-03-01", "sido": "서울특별시", "sigungu": "마포구",
+      "residence_since": "2025-02-20", "education": "대학휴학", "employment": "미취업",
+      "personal_income_monthly": 0, "household_size": 4, "household_income_monthly": 6000000,
+      "current_benefits": []
+    }
+  }
+]

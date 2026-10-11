@@ -1,0 +1,17 @@
+{
+  "policy_id": "busan-didimdol-plus-2026",
+  "name": "부산청년 디딤돌카드+ (사회진입활동비)",
+  "agency": "부산광역시 · 부산경제진흥원",
+  "region": "부산광역시",
+  "amount_krw": 1800000,
+  "amount_text": "월 30만 원 × 최대 6개월 (취업·창업 성공 시 성공금 30만 원 추가)",
+  "apply_start": "2026-03-09",
+  "apply_end": "2026-03-27",
+  "source_url": "https://suyane24.com/%EB%B6%80%EC%82%B0-%EC%B2%AD%EB%85%84%EC%88%98%EB%8B%B9-2026-%EC%9E%90%EA%B2%A9-%EC%8B%A0%EC%B2%AD-%EC%A1%B0%EA%B1%B4-%EC%B4%9D%EC%A0%95%EB%A6%AC",
+  "eligibility_text": "만 18~39세, 1986.01.01~2008.12.31 출생자. 공고일(2026.03.03) 기준 부산광역시 주민등록 거주. 고용보험 미가입, 본인 명의 사업자등록 없음(주 30시간 미만 근로는 증빙 시 신청 가능). 중위소득 150% 이하(2025년도 기준), 가구원 건강보험료 부과액 합산으로 판단. 최종학교 졸업, 중퇴 또는 제적 상태(대학·대학원 재학생 참여 불가, 방송통신대·사이버대 재학생 등 일부 예외)",
+  "exclusion_text": "대학·대학원 재학생",
+  "condition_dsl": "born(1986-01-01..2008-12-31)\nAND region(\"부산광역시\")\nAND employment in [\"미취업\", \"구직중\"]\nAND income_pct(household) <= 150   # 원문은 2025년 기준중위소득·건보료 합산 → 2026 표로 근사\nAND (education in [\"고졸\", \"대학졸업\"]\n     OR manual(\"중퇴·제적, 방송통신대·사이버대 재학 등 예외 해당\"))",
+  "exclusive_with": [
+    "busan-joy-double-account-2026"
+  ]
+}

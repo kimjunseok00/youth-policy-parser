@@ -1,0 +1,61 @@
+{
+  "as_of": "2026-10-10",
+  "note": "생성 후 사람이 원문과 대조해 확인한 판정만 기준값으로 유지한다.",
+  "expected": {
+    "부산진구 구직 청년": {
+      "national-employment-support-youth": "충족",
+      "busan-didimdol-plus-2026": "충족",
+      "youth-future-savings-2026": "충족",
+      "busan-job-matching-intern-2026": "확인필요",
+      "busan-joy-double-account-2026": "확인필요",
+      "youth-challenge-support-2026": "확인필요",
+      "youth-tomorrow-savings-2026": "불충족",
+      "busan-youth-rent-support": "불충족",
+      "busan-culture-art-pass-2026": "불충족"
+    },
+    "해운대구 재직 청년": {
+      "busan-joy-double-account-2026": "확인필요",
+      "busan-job-matching-intern-2026": "불충족",
+      "national-employment-support-youth": "불충족",
+      "youth-tomorrow-savings-2026": "불충족",
+      "youth-challenge-support-2026": "불충족",
+      "busan-youth-rent-support": "불충족",
+      "busan-didimdol-plus-2026": "불충족",
+      "youth-future-savings-2026": "불충족",
+      "busan-culture-art-pass-2026": "불충족"
+    },
+    "34세 생일 직전 구직자": {
+      "national-employment-support-youth": "충족",
+      "busan-didimdol-plus-2026": "충족",
+      "youth-future-savings-2026": "충족",
+      "busan-job-matching-intern-2026": "확인필요",
+      "busan-joy-double-account-2026": "확인필요",
+      "youth-challenge-support-2026": "확인필요",
+      "busan-youth-rent-support": "확인필요",
+      "youth-tomorrow-savings-2026": "불충족",
+      "busan-culture-art-pass-2026": "불충족"
+    },
+    "저소득 근로 청년": {
+      "youth-future-savings-2026": "충족",
+      "busan-joy-double-account-2026": "확인필요",
+      "youth-tomorrow-savings-2026": "확인필요",
+      "busan-youth-rent-support": "확인필요",
+      "busan-job-matching-intern-2026": "불충족",
+      "national-employment-support-youth": "불충족",
+      "youth-challenge-support-2026": "불충족",
+      "busan-didimdol-plus-2026": "불충족",
+      "busan-culture-art-pass-2026": "불충족"
+    },
+    "서울 거주 20세 대학생": {
+      "national-employment-support-youth": "충족",
+      "youth-future-savings-2026": "충족",
+      "busan-job-matching-intern-2026": "확인필요",
+      "youth-challenge-support-2026": "확인필요",
+      "busan-joy-double-account-2026": "불충족",
+      "youth-tomorrow-savings-2026": "불충족",
+      "busan-youth-rent-support": "불충족",
+      "busan-didimdol-plus-2026": "불충족",
+      "busan-culture-art-pass-2026": "불충족"
+    }
+  }
+}

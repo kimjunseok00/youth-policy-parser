@@ -1,0 +1,15 @@
+{
+  "policy_id": "busan-culture-art-pass-2026",
+  "name": "청년문화예술패스",
+  "agency": "부산광역시",
+  "region": "부산광역시",
+  "amount_krw": 200000,
+  "amount_text": "문화예술 관람비 20만 원",
+  "apply_start": null,
+  "apply_end": null,
+  "source_url": "https://young.busan.go.kr/index.nm?menuCd=273",
+  "eligibility_text": "19~20세 부산 청년 (2026년 달라지는 청년정책 요약 안내, 15,624명)",
+  "exclusion_text": "",
+  "condition_dsl": "age(19..20) AND region(\"부산광역시\")",
+  "exclusive_with": []
+}

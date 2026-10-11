@@ -1,0 +1,15 @@
+{
+  "policy_id": "busan-youth-rent-support",
+  "name": "청년 월세 지원",
+  "agency": "부산광역시",
+  "region": "부산광역시",
+  "amount_krw": 2400000,
+  "amount_text": "월 20만 원 × 최대 12개월 (실제 납부 월세 기준, 보증금·관리비 제외)",
+  "apply_start": null,
+  "apply_end": null,
+  "source_url": "https://young.busan.go.kr/index.nm?menuCd=37",
+  "eligibility_text": "만 19~34세 이하 부모님과 별도 거주 무주택 청년(청약통장 가입 필수). (원가구) 기준 중위소득 100% 이하 & (청년독립가구) 기준 중위소득 60% 이하",
+  "exclusion_text": "",
+  "condition_dsl": "age(19..34)\nAND manual(\"부모님과 별도 거주하는 무주택 청년\")\nAND manual(\"청약통장 가입\")\nAND income_pct(household) <= 60      # 청년독립가구 = 프로필의 가구\nAND manual(\"원가구(부모 포함) 기준중위소득 100% 이하\")",
+  "exclusive_with": []
+}

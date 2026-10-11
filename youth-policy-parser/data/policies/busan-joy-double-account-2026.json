@@ -1,0 +1,18 @@
+{
+  "policy_id": "busan-joy-double-account-2026",
+  "name": "부산청년 기쁨두배통장",
+  "agency": "부산광역시",
+  "region": "부산광역시",
+  "amount_krw": 3600000,
+  "amount_text": "본인 월 10만 원 저축 시 시가 같은 금액 지원, 2년 또는 3년 (시 지원분 최대 360만 원)",
+  "apply_start": "2026-08-10",
+  "apply_end": "2026-08-21",
+  "source_url": "https://www.seoul.co.kr/news/society/2026/08/03/20260803500080",
+  "eligibility_text": "공고일 기준 부산시에 거주하는 18~39세 청년(1986년 1월 1일생~2008년 12월 31일생). 청년 기준중위소득 150% 이하로, 신청인이 내는 건강보험료로 판단. 4대 보험 중 1개 이상 보험에 가입된 직장가입자, 자영업자 등. 일용직의 경우 공고일 전월과 당월 합산 근무일이 20일 이상",
+  "exclusion_text": "(부산청년플랫폼 안내, 과거 공고 기준) 유사 자산형성지원 사업에 참여한 이력이 있는 자 / 부산청년 일하는 기쁨카드지원 사업 및 사회진입활동비와 참가기간이 겹치는 자 / 군복무자 및 군복무 대체 근무자 / 기초생활수급자 및 법정 차상위계층",
+  "condition_dsl": "region(\"부산광역시\")\nAND born(1986-01-01..2008-12-31)\nAND income_pct(personal) <= 150   # 원문은 건강보험료로 판단 → 본인 소득으로 근사\nAND (employment in [\"재직\", \"자영업\", \"프리랜서\"]\n     OR manual(\"일용직: 공고일 전월과 당월 합산 근무일 20일 이상\"))\nAND manual(\"4대 보험 중 1개 이상 가입\")\nAND NOT receiving(\"청년내일저축계좌\")   # 유사 자산형성 사업 참여 이력\nAND NOT receiving(\"기초생활수급(생계·의료급여)\")\nAND NOT receiving(\"차상위계층\")\nAND NOT manual(\"군복무자 및 군복무 대체 근무자\")",
+  "exclusive_with": [
+    "youth-tomorrow-savings-2026",
+    "busan-didimdol-plus-2026"
+  ]
+}

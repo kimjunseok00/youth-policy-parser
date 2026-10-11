@@ -1,0 +1,15 @@
+{
+  "policy_id": "busan-job-matching-intern-2026",
+  "name": "청년잡 매칭 인턴",
+  "agency": "부산광역시",
+  "region": "부산광역시",
+  "amount_krw": 4500000,
+  "amount_text": "인턴 기간 월 150만 원 × 최대 3개월",
+  "apply_start": null,
+  "apply_end": null,
+  "source_url": "https://young.busan.go.kr/index.nm?menuCd=273",
+  "eligibility_text": "39세 이하 미취업 청년 (2026년 달라지는 청년정책 요약 안내, 150명)",
+  "exclusion_text": "",
+  "condition_dsl": "age(..39)\nAND employment in [\"미취업\", \"구직중\"]\nAND manual(\"세부 자격(거주 요건 등)은 공고문 확인\")",
+  "exclusive_with": []
+}

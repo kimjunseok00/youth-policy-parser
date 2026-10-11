@@ -1,0 +1,17 @@
+{
+  "policy_id": "youth-challenge-support-2026",
+  "name": "청년도전지원사업",
+  "agency": "고용노동부 · 부산광역시",
+  "region": "전국",
+  "amount_krw": 2500000,
+  "amount_text": "참여수당 월 최대 50만 원 × 최대 5개월",
+  "apply_start": null,
+  "apply_end": null,
+  "source_url": "https://policy.ambitstock.com/policies/youth-challenge-support/",
+  "eligibility_text": "만 18~34세 미취업 청년 (6개월 이상 고용보험 미가입, 중위소득 120% 이하). 학력 무관 (단, 현재 학교 재학 중이 아니어야 함). 군 복무 기간만큼 연령 상한 연장 (최대 6년)",
+  "exclusion_text": "국민취업지원제도 I유형 구직촉진수당 수급 중인 자 / 고용보험 가입 근로자 (아르바이트 포함) / 공무원·교사·군인 등 공공부문 재직자 / 현재 재학 중인 대학생 (휴학 포함 시 참여 가능 여부 지역별 상이). 국민취업지원제도 동시 수급 불가",
+  "condition_dsl": "age(18..34)   # 군 복무 기간만큼 상한 연장(최대 6년)은 반영하지 않음\nAND employment in [\"미취업\", \"구직중\"]\nAND income_pct(household) <= 120\nAND manual(\"6개월 이상 고용보험 미가입\")\nAND NOT education in [\"대학재학\", \"대학원\"]\nAND NOT receiving(\"국민취업지원제도\")",
+  "exclusive_with": [
+    "national-employment-support-youth"
+  ]
+}

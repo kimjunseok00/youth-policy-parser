@@ -1,0 +1,17 @@
+{
+  "policy_id": "national-employment-support-youth",
+  "name": "국민취업지원제도 (1유형 청년특례)",
+  "agency": "고용노동부",
+  "region": "전국",
+  "amount_krw": 3600000,
+  "amount_text": "구직촉진수당 월 60만 원 × 최대 6개월 (부양가족 1인당 월 10만 원, 최대 40만 원 추가)",
+  "apply_start": null,
+  "apply_end": null,
+  "source_url": "https://www.healin2me.com/2026/07/1-2026.html",
+  "eligibility_text": "선발형 청년특례: 만 15~34세 (군필자는 최대 37세), 중위소득 120% 이하, 취업경험 요구하지 않음",
+  "exclusion_text": "재학생은 원칙적으로 제외 (제적증명 가능한 중퇴자는 포함) / 구직급여(실업급여)를 받고 있거나 수급이 끝난 지 6개월이 지나지 않은 자 / 부정수급 확인 시 5년간 참여 제한",
+  "condition_dsl": "age(15..34)   # 군필자 최대 37세 연장은 반영하지 않음\nAND income_pct(household) <= 120\nAND employment in [\"미취업\", \"구직중\"]\nAND NOT education in [\"대학재학\", \"대학원\"]   # 휴학생 처리는 원문 불명확\nAND NOT receiving(\"구직급여(실업급여)\")",
+  "exclusive_with": [
+    "youth-challenge-support-2026"
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "as_of": "2026-10-01",
+  "results": [
+    {
+      "policy_id": "mock-intern",
+      "policy_name": "[예시] 청년 일자리 매칭 인턴",
+      "agency": "[예시] 부산광역시",
+      "verdict": "충족",
+      "amount_krw": 4500000,
+      "apply_end": "2026-10-31",
+      "reason": {
+        "label": "모든 조건 충족",
+        "verdict": "충족",
+        "children": [
+          {"label": "만 39세 이하", "verdict": "충족", "detail": "만 25세 ≤ 39세", "source_quote": "공고일 기준 만 39세 이하"},
+          {"label": "부산 거주", "verdict": "충족", "detail": "부산광역시 부산진구 거주", "source_quote": "부산광역시에 주민등록을 둔 자"},
+          {"label": "미취업 상태", "verdict": "충족", "detail": "현재 구직중", "source_quote": "신청일 현재 미취업자"}
+        ]
+      }
+    },
+    {
+      "policy_id": "mock-culture",
+      "policy_name": "[예시] 청년 문화패스",
+      "agency": "[예시] 부산광역시",
+      "verdict": "충족",
+      "amount_krw": 200000,
+      "apply_end": null,
+      "reason": {
+        "label": "모든 조건 충족",
+        "verdict": "충족",
+        "children": [
+          {"label": "부산 거주", "verdict": "충족", "detail": "부산광역시 부산진구 거주", "source_quote": "부산광역시 거주 청년"}
+        ]
+      }
+    },
+    {
+      "policy_id": "mock-rent",
+      "policy_name": "[예시] 청년 월세 지원",
+      "agency": "[예시] 중앙부처",
+      "verdict": "불충족",
+      "amount_krw": 2400000,
+      "apply_end": "2026-12-31",
+      "reason": {
+        "label": "소득 조건 불충족",
+        "verdict": "불충족",
+        "children": [
+          {"label": "만 19~34세", "verdict": "충족", "detail": "만 25세", "source_quote": "만 19세 이상 34세 이하"},
+          {"label": "원가구 소득 기준중위소득 100% 이하", "verdict": "불충족", "detail": "내 가구소득 약 112% > 기준 100%", "source_quote": "원가구 소득이 기준중위소득 100% 이하"}
+        ]
+      }
+    },
+    {
+      "policy_id": "mock-residence",
+      "policy_name": "[예시] 청년 정착 지원금",
+      "agency": "[예시] 부산광역시",
+      "verdict": "불충족",
+      "amount_krw": 1000000,
+      "apply_end": "2026-11-15",
+      "reason": {
+        "label": "거주 기간 조건 불충족",
+        "verdict": "불충족",
+        "children": [
+          {"label": "부산 1년 이상 거주", "verdict": "불충족", "detail": "거주 8개월 < 기준 12개월 (2027-02-01부터 충족)", "source_quote": "공고일 기준 부산광역시에 1년 이상 거주한 자"}
+        ]
+      }
+    },
+    {
+      "policy_id": "mock-challenge",
+      "policy_name": "[예시] 청년 도전 지원",
+      "agency": "[예시] 중앙부처",
+      "verdict": "불충족",
+      "amount_krw": 2500000,
+      "apply_end": null,
+      "reason": {
+        "label": "중복수혜 제한",
+        "verdict": "불충족",
+        "children": [
+          {"label": "국민취업지원제도 참여자 제외", "verdict": "불충족", "detail": "현재 국민취업지원제도 수혜 중", "source_quote": "국민취업지원제도 참여자는 제외"}
+        ]
+      }
+    },
+    {
+      "policy_id": "mock-unknown",
+      "policy_name": "[예시] 청년 자산형성 지원",
+      "agency": "[예시] 부산광역시",
+      "verdict": "확인필요",
+      "amount_krw": 3600000,
+      "apply_end": "2026-10-20",
+      "reason": {
+        "label": "자동 판정할 수 없는 조건 포함",
+        "verdict": "확인필요",
+        "children": [
+          {"label": "근로 중인 청년", "verdict": "충족", "detail": "", "source_quote": "근로 중인 청년"},
+          {"label": "기타 시장이 인정하는 자", "verdict": "확인필요", "detail": "담당 기관에 문의가 필요한 조건입니다", "source_quote": "기타 시장이 필요하다고 인정하는 자"}
+        ]
+      }
+    }
+  ]
+}
