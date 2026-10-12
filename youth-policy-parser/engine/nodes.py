@@ -95,12 +95,14 @@ def _wrap(child: Node, parent: type) -> str:
 class Age:
     min_age: int | None
     max_age: int | None
+    military_max_months: int = 0  # 군 복무 기간만큼 상한 연장 (최대 개월). 0이면 연장 없음
     CATEGORY = Category.AGE
 
     def to_dsl(self) -> str:
         lo = "" if self.min_age is None else str(self.min_age)
         hi = "" if self.max_age is None else str(self.max_age)
-        return f"age({lo}..{hi})"
+        mil = f", military={self.military_max_months}" if self.military_max_months else ""
+        return f"age({lo}..{hi}{mil})"
 
 
 @dataclass(frozen=True)

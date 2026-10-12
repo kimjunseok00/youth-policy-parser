@@ -12,11 +12,12 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from datetime import date, timedelta
 
 from pydantic import BaseModel
 
+from engine.dates import add_months, birthday
 from engine.evaluator import Context, evaluate_node, is_open
 from engine.income import MedianIncomeTable, load_table
 from engine.nodes import Age, Comp, Residence, iter_predicates
@@ -35,36 +36,18 @@ class TimelineEvent(BaseModel):
     detail: str
 
 
-def birthday(birth: date, age: int) -> date:
-    """만 age세가 되는 날. 2월 29일생은 평년에는 3월 1일로 본다."""
-    year = birth.year + age
-    try:
-        return birth.replace(year=year)
-    except ValueError:
-        return date(year, 3, 1)
-
-
-def add_months(d: date, months: int) -> date:
-    """d에서 months개월 뒤. 말일을 넘으면 다음 달 1일로 (full_months와 같은 기준)."""
-    y, m = divmod(d.month - 1 + months, 12)
-    year, month = d.year + y, m + 1
-    try:
-        return d.replace(year=year, month=month)
-    except ValueError:
-        nxt_y, nxt_m = (year + 1, 1) if month == 12 else (year, month + 1)
-        return date(nxt_y, nxt_m, 1)
-
-
 def _candidate_dates(ast, profile: Profile, as_of: date, horizon: date) -> tuple[list, list]:
     """(자격 발생 후보, 자격 상실 후보) 날짜 목록."""
     gain, loss = set(), set()
     for pred in iter_predicates(ast):
         match pred:
-            case Age(lo, hi):
+            case Age(lo, hi, military):
                 if lo is not None:
                     gain.add(birthday(profile.birth_date, lo))
                 if hi is not None:
-                    loss.add(birthday(profile.birth_date, hi + 1))
+                    # 상한은 군 복무 기간만큼 늦춘 생일 기준 (dates.age_for_cap과 같은 규칙)
+                    ext = min(profile.military_months, military)
+                    loss.add(birthday(add_months(profile.birth_date, ext), hi + 1))
             case Residence(comp, months):
                 need = months + 1 if comp == Comp.GT else months
                 gain.add(add_months(profile.residence_since, need))
@@ -79,6 +62,7 @@ def timeline(
     horizon_days: int = 365 * 3,
     deadline_days: int = 60,
     table: MedianIncomeTable | None = None,
+    answers: Mapping[str, bool] | None = None,
 ) -> list[TimelineEvent]:
     """앞으로 판정이 바뀌는 날과 마감일을 날짜순으로 돌려준다."""
     table = table or load_table()
@@ -86,7 +70,7 @@ def timeline(
     events: list[TimelineEvent] = []
 
     def verdict_on(ast, on: date) -> Verdict:
-        return evaluate_node(ast, Context(profile, on, table)).verdict
+        return evaluate_node(ast, Context(profile, on, table, dict(answers or {}))).verdict
 
     for policy in policies:
         if policy.apply_end and policy.apply_end < as_of:

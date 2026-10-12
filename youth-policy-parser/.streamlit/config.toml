@@ -1,0 +1,9 @@
+# 되나요 테마 (저장소 루트의 .streamlit/config.toml과 같은 내용 유지)
+[theme]
+primaryColor = "#1d5f8a"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f2f6f9"
+textColor = "#16212b"
+
+[browser]
+gatherUsageStats = false

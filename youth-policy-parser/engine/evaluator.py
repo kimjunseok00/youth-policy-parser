@@ -16,11 +16,12 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
-from dataclasses import dataclass
+from collections.abc import Iterable, Mapping
+from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
+from engine.dates import age_for_cap, full_age, full_months
 from engine.income import MedianIncomeTable, load_table
 from engine.nodes import (
     Age,
@@ -54,23 +55,16 @@ def today_kst() -> date:
     return datetime.now(KST).date()
 
 
+# 사유 트리의 조합 노드 라벨 (리포트 집계에서 AND/OR를 구분하는 데도 쓴다)
+AND_LABEL = "다음 조건을 모두 충족"
+OR_LABEL = "다음 중 하나 이상 충족"
+
 # 비교 연산자를 한국어 조건 문구로 (예: "<=" → "이하")
 COMP_WORD = {Comp.LE: "이하", Comp.GE: "이상", Comp.LT: "미만", Comp.GT: "초과", Comp.EQ: ""}
 SCOPE_WORD = {"personal": "본인", "household": "가구"}
 
 
-# ---------------------------------------------------------------------------
-# 날짜 계산 (기준일 기준)
-# ---------------------------------------------------------------------------
-def full_age(birth: date, on: date) -> int:
-    """만 나이. 생일 당일에 한 살 늘어난다."""
-    return on.year - birth.year - ((on.month, on.day) < (birth.month, birth.day))
-
-
-def full_months(start: date, on: date) -> int:
-    """start부터 on까지 꽉 찬 개월 수. 2024-02-01 → 2025-02-01 = 12개월."""
-    months = (on.year - start.year) * 12 + (on.month - start.month)
-    return months - (on.day < start.day)
+__all__ = ["full_age", "full_months"]  # 날짜 규칙은 engine/dates.py (하위 호환용 재노출)
 
 
 # ---------------------------------------------------------------------------
@@ -108,6 +102,8 @@ class Context:
     profile: Profile
     as_of: date
     income_table: MedianIncomeTable
+    # manual("원문") 조건에 사용자가 직접 답한 값. True = 해당함, False = 해당하지 않음
+    answers: Mapping[str, bool] = field(default_factory=dict)
 
 
 def evaluate_node(node: Node, ctx: Context) -> ReasonNode:
@@ -116,14 +112,14 @@ def evaluate_node(node: Node, ctx: Context) -> ReasonNode:
         case And(children):
             kids = [evaluate_node(c, ctx) for c in children]
             return ReasonNode(
-                label="다음 조건을 모두 충족",
+                label=AND_LABEL,
                 verdict=combine_and(k.verdict for k in kids),
                 children=kids,
             )
         case Or(children):
             kids = [evaluate_node(c, ctx) for c in children]
             return ReasonNode(
-                label="다음 중 하나 이상 충족",
+                label=OR_LABEL,
                 verdict=combine_or(k.verdict for k in kids),
                 children=kids,
             )
@@ -146,16 +142,23 @@ def _evaluate_predicate(node: Node, ctx: Context) -> ReasonNode:
         return ReasonNode(label=label, verdict=verdict, detail=detail, category=category)
 
     match node:
-        case Age(lo, hi):
+        case Age(lo, hi, military):
             age = full_age(p.birth_date, ctx.as_of)
-            ok = (lo is None or age >= lo) and (hi is None or age <= hi)
+            # 상한은 군 복무 기간만큼(최대 military개월) 늦춰서 본다
+            cap_age = age_for_cap(p.birth_date, ctx.as_of, p.military_months, military)
+            ok = (lo is None or age >= lo) and (hi is None or cap_age <= hi)
             if lo is not None and hi is not None:
                 label = f"만 {lo}~{hi}세"
             elif hi is not None:
                 label = f"만 {hi}세 이하"
             else:
                 label = f"만 {lo}세 이상"
-            return leaf(label, _bool(ok), f"만 {age}세")
+            if military:
+                label += f" (군 복무 기간만큼 최대 {military // 12}년 연장)"
+            detail = f"만 {age}세"
+            if military and cap_age != age:
+                detail += f" (군 복무 {p.military_months}개월 반영 시 만 {cap_age}세)"
+            return leaf(label, _bool(ok), detail)
 
         case Born(start, end):
             b = p.birth_date
@@ -198,15 +201,38 @@ def _evaluate_predicate(node: Node, ctx: Context) -> ReasonNode:
             return leaf(f"'{benefit}' 수혜", _bool(receiving), detail)
 
         case Manual(text):
+            # 사용자가 직접 답했으면 그 답을 쓴다 (확인 질문 기능).
+            # '※'로 시작하는 안내문은 조건이 아니라 '공고문을 보라'는 표시라서 답변을 받지 않는다.
+            if text in ctx.answers and not is_notice(text):
+                yes = ctx.answers[text]
+                return ReasonNode(
+                    label=text,
+                    verdict=_bool(yes),
+                    detail=f"직접 답변: {'해당함' if yes else '해당하지 않음'}",
+                    source_quote=text,
+                    category=category,
+                )
             return ReasonNode(
                 label=text,
                 verdict=UNKNOWN,
-                detail="자동 판정할 수 없는 조건입니다. 공고문이나 담당 기관에서 확인하세요.",
+                detail=(
+                    "공고문이나 담당 기관에서 직접 확인해야 하는 항목입니다."
+                    if is_notice(text)
+                    else "자동 판정할 수 없는 조건입니다. '확인 질문'에 답하거나 공고문에서 확인하세요."
+                ),
                 source_quote=text,
                 category=category,
             )
 
     raise TypeError(f"평가할 수 없는 노드: {node!r}")
+
+
+NOTICE_MARK = "※"
+
+
+def is_notice(manual_text: str) -> bool:
+    """manual("※ ...")은 질문이 아니라 안내문 (예: '세부 자격은 공고문 확인'). 항상 '확인 필요'로 둔다."""
+    return manual_text.lstrip().startswith(NOTICE_MARK)
 
 
 def _income_of(p: Profile, scope: str) -> tuple[int, int]:
@@ -277,8 +303,23 @@ def evaluate_policy(policy: Policy, ctx: Context) -> PolicyResult:
         apply_end=policy.apply_end,
         is_open=is_open(policy, ctx.as_of),
         source_url=policy.source_url,
+        likelihood=likelihood(tree),
         reason=tree,
     )
+
+
+def likelihood(tree: ReasonNode) -> float:
+    """통과 가능성 추정치 (순위용 휴리스틱).
+
+    충족 1, 불충족 0. 확인 필요는 '아직 모르는 조건' 하나당 반반의 확률로 본다 → 0.5^n.
+    정확한 확률이 아니라 "무엇부터 확인하면 좋은지" 순서를 정하기 위한 값이다.
+    """
+    if tree.verdict == PASS:
+        return 1.0
+    if tree.verdict == FAIL:
+        return 0.0
+    unknown = sum(1 for leaf in _leaves(tree) if leaf.verdict == UNKNOWN)
+    return 0.5 ** max(unknown, 1)
 
 
 def is_open(policy: Policy, on: date) -> bool:
@@ -296,14 +337,17 @@ def evaluate(
     policies: Iterable[Policy],
     as_of: date | None = None,
     income_table: MedianIncomeTable | None = None,
+    answers: Mapping[str, bool] | None = None,
 ) -> EvaluationResult:
     """프로필 1개에 대해 모든 정책을 판정한다. (앱이 부르는 유일한 함수)
 
-    정렬: 충족 → 확인 필요 → 불충족. 같은 판정 안에서는 신청 가능한 것 먼저, 그다음 금액 큰 순.
+    answers: manual("원문") 조건에 대한 사용자 답변 {원문: 해당 여부}. 없으면 '확인 필요'로 둔다.
+    정렬: 충족 → 확인 필요 → 불충족. 같은 판정 안에서는 신청 가능한 것 먼저,
+          그다음 기대 수령액(금액 × 통과 가능성)이 큰 순.
     """
-    ctx = Context(profile, as_of or today_kst(), income_table or load_table())
+    ctx = Context(profile, as_of or today_kst(), income_table or load_table(), dict(answers or {}))
     results = [evaluate_policy(p, ctx) for p in policies]
-    results.sort(key=lambda r: (ORDER[r.verdict], not r.is_open, -(r.amount_krw or 0)))
+    results.sort(key=lambda r: (ORDER[r.verdict], not r.is_open, -r.expected_krw))
     return EvaluationResult(as_of=ctx.as_of, results=results)
 
 

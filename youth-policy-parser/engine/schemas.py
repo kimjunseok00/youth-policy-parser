@@ -53,12 +53,22 @@ class Profile(BaseModel):
     household_size: int = Field(ge=1, description="가구원 수")
     household_income_monthly: int = Field(ge=0, description="가구 월소득(원)")
     current_benefits: list[str] = Field(default_factory=list, description="현재 받고 있는 지원")
+    military_months: int = Field(
+        default=0, ge=0, le=120, description="군 복무 기간(개월). 연령 상한 연장 규칙에 쓴다"
+    )
 
     @model_validator(mode="after")
-    def _check_dates(self) -> Profile:
-        # 태어나기 전에 전입할 수는 없다: 입력 실수를 조기에 잡는다.
+    def _check_consistency(self) -> Profile:
+        """서로 모순되는 입력을 막는다. (모순 입력은 판정을 조용히 틀리게 만든다)"""
+        # 태어나기 전에 전입할 수는 없다
         if self.residence_since < self.birth_date:
-            raise ValueError("전입일(residence_since)이 생년월일보다 빠를 수 없습니다.")
+            raise ValueError("전입일이 생년월일보다 빠를 수 없습니다.")
+        # 가구 소득에는 본인 소득이 포함된다
+        if self.personal_income_monthly > self.household_income_monthly:
+            raise ValueError(
+                "본인 월소득이 가구 월소득보다 클 수 없습니다. "
+                "가구 월소득에는 본인 소득도 포함해서 입력하세요."
+            )
         return self
 
 
@@ -130,7 +140,19 @@ class PolicyResult(BaseModel):
     apply_end: date | None = None
     is_open: bool = Field(default=True, description="판정 기준일에 신청 가능한지 (기간 외면 False)")
     source_url: str | None = None
+    likelihood: float = Field(
+        default=1.0,
+        ge=0,
+        le=1,
+        description="통과 가능성 추정치. 충족 1, 불충족 0, 확인 필요는 확인할 조건 1개당 절반",
+    )
     reason: ReasonNode
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def expected_krw(self) -> int:
+        """기대 수령액 = 금액 × 통과 가능성. '확인 필요' 정책의 확인 순서를 정하는 데 쓴다."""
+        return round((self.amount_krw or 0) * self.likelihood)
 
 
 class EvaluationResult(BaseModel):

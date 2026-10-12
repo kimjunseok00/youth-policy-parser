@@ -50,15 +50,17 @@ def test_profile_rejects_unknown_education():
         make_profile(education="박사")
 
 
-def test_mock_result_matches_schema():
-    """앱 담당이 쓰는 가짜 결과 파일이 스키마와 맞는지 확인."""
-    raw = (ROOT / "data" / "mock" / "mock_results.json").read_text(encoding="utf-8")
-    result = EvaluationResult.model_validate_json(raw)
-    assert len(result.by_verdict(Verdict.PASS)) == 2
-    assert len(result.by_verdict(Verdict.FAIL)) == 3
-    assert len(result.by_verdict(Verdict.UNKNOWN)) == 1
-    # 충족 정책 합계: 4,500,000 + 200,000
-    assert result.total_expected_krw == 4_700_000
+def test_result_json_round_trip():
+    """판정 결과를 JSON으로 저장했다가 다시 읽어도 같은지 (API·캐시로 주고받을 때 필요)."""
+    from datetime import date
+
+    from engine.evaluator import evaluate, load_policies
+
+    result = evaluate(make_profile(), load_policies(), date(2026, 10, 10))
+    again = EvaluationResult.model_validate_json(result.model_dump_json())
+    assert again == result
+    assert again.total_expected_krw == result.total_expected_krw
+    assert {r.verdict for r in again.results} <= set(Verdict)
 
 
 def test_policy_id_format():

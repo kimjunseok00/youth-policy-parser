@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import json
 from datetime import date
-from functools import cache
+from functools import cache, lru_cache
 from pathlib import Path
 
 from lark import Lark, Token, Transformer, v_args
@@ -90,14 +90,19 @@ class _ToAST(Transformer):
         return child.child if isinstance(child, Not) else Not(child)
 
     # ---- 조건 8종
-    def age(self, lo: Token | None, hi: Token | None) -> Age:
+    def age(self, lo: Token | None, hi: Token | None, mil: Token | None) -> Age:
         min_age = int(lo) if lo is not None else None
         max_age = int(hi) if hi is not None else None
+        military = int(mil) if mil is not None else 0
         if min_age is None and max_age is None:
             raise DSLSemanticError("age(..)에는 최소 나이나 최대 나이 중 하나가 있어야 합니다.")
         if min_age is not None and max_age is not None and min_age > max_age:
             raise DSLSemanticError(f"age({min_age}..{max_age}): 최소 나이가 최대 나이보다 큽니다.")
-        return Age(min_age, max_age)
+        if military and max_age is None:
+            raise DSLSemanticError("military=는 연령 상한(..N)이 있을 때만 쓸 수 있습니다.")
+        if military > 120:
+            raise DSLSemanticError(f"military={military}: 연장은 최대 120개월까지입니다.")
+        return Age(min_age, max_age, military)
 
     def born(self, lo: Token | None, hi: Token | None) -> Born:
         try:
@@ -153,8 +158,12 @@ def _lark() -> Lark:
     return Lark(GRAMMAR_PATH.read_text(encoding="utf-8"), parser="lalr", maybe_placeholders=True)
 
 
+@lru_cache(maxsize=1024)
 def parse(text: str) -> Node:
-    """DSL 문자열을 AST로 바꾼다. 실패하면 위치와 이유를 담은 DSLError를 던진다."""
+    """DSL 문자열을 AST로 바꾼다. 실패하면 위치와 이유를 담은 DSLError를 던진다.
+
+    AST는 불변 객체라 같은 문자열의 결과를 캐시해도 안전하다 (리포트처럼 수백 번 판정할 때 빠름).
+    """
     try:
         tree = _lark().parse(text)
     except UnexpectedInput as e:

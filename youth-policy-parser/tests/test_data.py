@@ -41,7 +41,7 @@ def test_policy_is_complete(p):
 
 
 def test_personas_match_schema():
-    assert len(PERSONAS) == 5
+    assert len(PERSONAS) == 6
     for per in PERSONAS:
         Profile.model_validate(per["profile"])
         assert set(per["profile"]["current_benefits"]) <= set(BENEFIT_NAMES)

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>개인정보처리방침 — 되나요</title>
+  <meta name="description" content="되나요 서비스의 개인정보 처리방침">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top"><div class="wrap"><a class="logo" href="./">되나요<span>?</span></a>
+    <nav class="nav"><a href="./">서비스 소개</a><a href="terms.html">이용약관</a></nav></div></header>
+
+  <main class="wrap narrow doc">
+    <h1>개인정보처리방침</h1>
+    <p class="meta">시행일: 2026년 10월 12일 · 버전 1.0</p>
+
+    <p class="callout">요약: 판정에 입력하신 정보는 <b>저장하지 않습니다.</b> “익명 통계 제공”에 동의한 경우에만, 개인을 알아볼 수 없는 요약(연령대·구·탈락 조건 등)을 저장합니다. 회원가입이 없고, 이름·연락처를 받지 않습니다.</p>
+
+    <h2>1. 처리 목적</h2>
+    <p>되나요(이하 “서비스”)는 다음 목적으로만 정보를 처리합니다.</p>
+    <ul>
+      <li>청년정책 자격 판정과 그 결과 표시</li>
+      <li>(동의한 경우) 정책 개선과 지자체 리포트를 위한 익명 통계 작성</li>
+    </ul>
+
+    <h2>2. 처리하는 항목과 보유 기간</h2>
+    <table>
+      <thead><tr><th>구분</th><th>항목</th><th>보유 기간</th></tr></thead>
+      <tbody>
+        <tr><td>판정 입력 (필수)</td><td>생년월일, 거주 시·도·시·군·구, 전입일, 학력·재학 상태, 취업 상태, 본인·가구 월소득, 가구원 수, 현재 받는 지원, 군 복무 기간, 확인 질문 답변</td><td>저장하지 않음. 브라우저를 닫거나 일정 시간이 지나면 서버 메모리에서 사라짐</td></tr>
+        <tr><td>익명 통계 (선택, 동의 시)</td><td>연령대(5세 단위), 구·군(부산 외 지역은 “부산 외”), 취업 상태, 학력, 가구원 수(5인 이상 묶음), 가구소득 구간(기준중위소득 20%p 단위), 군 복무 여부, 정책별 판정 결과와 탈락 조건, 판정한 연·월</td><td>수집일로부터 2년 또는 서비스 종료 시까지 중 먼저 오는 날</td></tr>
+      </tbody>
+    </table>
+    <p>익명 통계에는 생년월일, 정확한 소득, 전입일, 현재 받는 지원, 이름·연락처·IP 주소를 저장하지 않습니다. 리포트에서는 같은 묶음이 5명 미만이면 표시하지 않습니다.</p>
+
+    <h2>3. 동의를 거부할 권리</h2>
+    <p>익명 통계 제공은 선택입니다. 동의하지 않아도 판정 기능을 모두 이용할 수 있습니다.</p>
+
+    <h2>4. 제3자 제공</h2>
+    <p>서비스는 정보를 제3자에게 제공하지 않습니다. 지자체·기관에는 개인을 알아볼 수 없는 집계 결과만 제공합니다.</p>
+
+    <h2>5. 처리 위탁과 국외 이전</h2>
+    <p>서비스 운영을 위해 아래 클라우드를 이용합니다. 판정 입력은 판정하는 동안 호스팅 서버의 메모리에서만 처리됩니다.</p>
+    <table>
+      <thead><tr><th>업체</th><th>역할</th><th>위치</th></tr></thead>
+      <tbody>
+        <tr><td>Snowflake Inc. (Streamlit Community Cloud)</td><td>판정 앱 호스팅</td><td>미국</td></tr>
+        <tr><td>Supabase Inc.</td><td>익명 통계 저장 (동의한 경우)</td><td>프로젝트 생성 시 선택한 지역</td></tr>
+        <tr><td>GitHub Inc. (GitHub Pages)</td><td>이 안내 페이지 호스팅</td><td>미국</td></tr>
+      </tbody>
+    </table>
+
+    <h2>6. 파기</h2>
+    <p>보유 기간이 지난 익명 통계는 지체 없이 데이터베이스에서 삭제합니다. 판정 입력은 저장하지 않으므로 별도로 파기할 대상이 없습니다.</p>
+
+    <h2>7. 정보주체의 권리</h2>
+    <p>열람·정정·삭제·처리정지를 요구할 수 있습니다. 다만 익명 통계는 개인을 알아볼 수 없도록 저장하므로, 특정인의 기록을 찾아 열람하거나 삭제하는 것이 기술적으로 불가능할 수 있습니다.</p>
+
+    <h2>8. 안전성 확보 조치</h2>
+    <ul>
+      <li>저장소 접근 키는 서버 설정에만 두고 공개 코드에 넣지 않습니다.</li>
+      <li>익명 통계 저장소는 쓰기 전용 키로만 기록하고, 읽기는 서버에서만 합니다.</li>
+      <li>모든 통신은 HTTPS로 암호화됩니다.</li>
+    </ul>
+
+    <h2>9. 쿠키</h2>
+    <p>서비스는 광고·추적 목적의 쿠키를 쓰지 않습니다. 앱 호스팅(Streamlit)이 화면 연결을 유지하기 위해 기술적으로 필요한 쿠키를 쓸 수 있으며, 브라우저 설정에서 거부할 수 있습니다(이 경우 앱이 동작하지 않을 수 있음).</p>
+
+    <h2>10. 개인정보 보호책임자</h2>
+    <table>
+      <tbody>
+        <tr><th>책임자</th><td>[팀장 이름 — 배포 전 입력]</td></tr>
+        <tr><th>연락처</th><td>[대표 이메일 — 배포 전 입력]</td></tr>
+        <tr><th>문의</th><td><a href="https://github.com/kimjunseok00/youth-policy-parser/issues/new?labels=privacy">GitHub 문의 남기기</a></td></tr>
+      </tbody>
+    </table>
+    <p>개인정보 침해 신고·상담은 개인정보침해신고센터(국번 없이 118, privacy.kisa.or.kr) 또는 개인정보분쟁조정위원회(1833-6972, www.kopico.go.kr)에도 할 수 있습니다.</p>
+
+    <h2>11. 변경</h2>
+    <p>이 방침이 바뀌면 시행 7일 전에 이 페이지에 알립니다.</p>
+  </main>
+
+  <footer class="foot"><div class="wrap"><span>되나요 · 2026</span>
+    <nav><a href="./">서비스 소개</a><a href="terms.html">이용약관</a></nav></div></footer>
+</body>
+</html>
