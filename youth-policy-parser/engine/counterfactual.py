@@ -17,7 +17,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from datetime import date
 
 from pydantic import BaseModel
@@ -137,11 +137,12 @@ def _gap(pred: Predicate, negated: bool, ctx: Context) -> tuple[str, str, str]:
     """(조건 설명, 차이 설명, 해결 방법 분류)"""
     p = ctx.profile
     match pred:
-        case Age(lo, hi):
+        case Age(lo, hi, military):
             age = full_age(p.birth_date, ctx.as_of)
             if lo is not None and age < lo:
                 return f"만 {lo}세 이상", f"지금 만 {age}세 → {lo - age}년 뒤 충족", "시간"
-            return f"만 {hi}세 이하", f"지금 만 {age}세 → 상한 초과", "변경 어려움"
+            extra = f" (군 복무 기간만큼 최대 {military // 12}년 연장)" if military else ""
+            return f"만 {hi}세 이하{extra}", f"지금 만 {age}세 → 상한 초과", "변경 어려움"
         case Born(start, end):
             return f"{start or ''}~{end or ''} 출생", f"{p.birth_date} 출생", "변경 어려움"
         case Region(sido, sigungu):
@@ -193,9 +194,10 @@ def near_misses(
     policies: Iterable[Policy],
     as_of: date,
     table: MedianIncomeTable | None = None,
+    answers: Mapping[str, bool] | None = None,
 ) -> list[NearMiss]:
     """불충족 정책 중 탈락 원인이 하나뿐인 정책. 금액이 큰 순."""
-    ctx = Context(profile, as_of, table or load_table())
+    ctx = Context(profile, as_of, table or load_table(), dict(answers or {}))
     out: list[NearMiss] = []
     for policy in _open_only(policies, as_of):
         ast = _parse_or_none(policy)
@@ -273,17 +275,18 @@ def suggestions(
     policies: Iterable[Policy],
     as_of: date,
     table: MedianIncomeTable | None = None,
+    answers: Mapping[str, bool] | None = None,
 ) -> list[Suggestion]:
     """행동 하나씩을 적용해 전체를 다시 판정하고, 순효과가 큰 순으로 돌려준다."""
     policies = _open_only(policies, as_of)  # 마감된 정책은 바꿔도 받을 수 없다
     table = table or load_table()
-    ctx = Context(profile, as_of, table)
-    before = evaluate(profile, policies, as_of, table)
+    ctx = Context(profile, as_of, table, dict(answers or {}))
+    before = evaluate(profile, policies, as_of, table, answers)
     out: list[Suggestion] = []
 
     for key, (action, patch) in _candidate_changes(profile, policies, ctx).items():
         changed = profile.model_copy(update=patch)
-        after = evaluate(changed, policies, as_of, table)
+        after = evaluate(changed, policies, as_of, table, answers)
         gained, lost = _diff(before, after)
         if not gained:
             continue

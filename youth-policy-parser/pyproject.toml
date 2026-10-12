@@ -30,3 +30,5 @@ target-version = "py311"
 [tool.ruff.lint]
 # E/F: 기본 오류, I: import 정렬, UP: 최신 문법, B: 흔한 버그 패턴
 select = ["E", "F", "I", "UP", "B"]
+# 줄 길이는 ruff format이 관리한다. 한글 주석·문자열까지 강제하면 가독성이 나빠져서 제외
+ignore = ["E501"]

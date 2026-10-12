@@ -10,6 +10,6 @@
   "source_url": "https://v.daum.net/v/20260622001744644",
   "eligibility_text": "만 19~34세 (군 복무 기간만큼 연장, 최대 만 40세). 개인 연소득 6,000만 원 이하 또는 연 매출 3억 원 이하 소상공인. 가구소득 중위소득 200% 이하",
   "exclusion_text": "청년도약계좌 가입자는 원칙적으로 중복 가입 불가 (이번 신청기간 한시 갈아타기 허용) / 도약계좌를 만기까지 유지한 사람",
-  "condition_dsl": "age(19..34)\nAND income(personal) <= 5000000   # 연 6,000만 원 = 월 500만 원\nAND income_pct(household) <= 200\nAND NOT receiving(\"청년도약계좌\")",
+  "condition_dsl": "age(19..34, military=72)   # 군 복무 기간만큼 연장, 최대 만 40세\nAND income(personal) <= 5000000   # 연 6,000만 원 = 월 500만 원\nAND income_pct(household) <= 200\nAND NOT receiving(\"청년도약계좌\")",
   "exclusive_with": []
 }

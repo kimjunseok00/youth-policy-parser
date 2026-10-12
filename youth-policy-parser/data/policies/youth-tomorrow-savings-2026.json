@@ -10,7 +10,7 @@
   "source_url": "https://studygov.kr/blog/3112-youth-savings-eligibility-conditions/",
   "eligibility_text": "만 15~39세 (군 복무 기간만큼 상한 연장, 최대 6년). 근로·사업소득 월 10만원 이상. 가구 기준 중위소득 50% 이하. 2026년부터 신규 가입 대상이 기준 중위소득 100% 이하에서 50% 이하로 축소",
   "exclusion_text": "",
-  "condition_dsl": "age(15..39)\nAND income(personal) >= 100000\nAND income_pct(household) <= 50\nAND NOT receiving(\"청년내일저축계좌\")\nAND manual(\"연중 모집 일정·재산 기준은 복지로에서 확인\")",
+  "condition_dsl": "age(15..39, military=72)   # 군 복무 기간만큼 상한 연장(최대 6년)\nAND income(personal) >= 100000\nAND income_pct(household) <= 50\nAND NOT receiving(\"청년내일저축계좌\")\nAND manual(\"※ 연중 모집 일정·재산 기준은 복지로에서 확인\")",
   "exclusive_with": [
     "busan-joy-double-account-2026"
   ]

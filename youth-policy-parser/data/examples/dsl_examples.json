@@ -20,7 +20,7 @@
     "source_url": "https://young.busan.go.kr/index.nm?menuCd=273",
     "source_note": "요약 안내 기준. 거주 요건 등 세부 조건은 공고문 확인 필요",
     "eligibility_text": "39세 이하 미취업 청년",
-    "dsl": "age(..39)\nAND employment in [\"미취업\", \"구직중\"]\nAND manual(\"세부 자격(거주 요건 등)은 공고문 확인\")",
+    "dsl": "age(..39)\nAND employment in [\"미취업\", \"구직중\"]\nAND manual(\"※ 세부 자격(거주 요건 등)은 공고문 확인\")",
     "design_note": "하한 없는 나이 범위 age(..39) 예시. 요약 안내만 있을 때는 manual()로 '공고문 확인 필요'를 명시해 과신을 막는다."
   },
   {
