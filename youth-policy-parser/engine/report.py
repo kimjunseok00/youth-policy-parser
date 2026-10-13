@@ -34,11 +34,11 @@ PASS, FAIL, UNKNOWN = Verdict.PASS, Verdict.FAIL, Verdict.UNKNOWN
 # ---------------------------------------------------------------------------
 SYNTHETIC_ASSUMPTIONS = {
     "지역": "부산광역시 16개 구·군 균등",
-    "나이": "만 19~39세 균등",
+    "나이": "만 19~45세 균등 (연령 상한 완화를 시험할 수 있도록 40대 초반 포함)",
     "취업상태": "재직 50% · 구직중 20% · 미취업 15% · 프리랜서 10% · 자영업 5%",
     "학력": "대학졸업 45% · 고졸 20% · 대학재학 20% · 대학휴학·졸업예정·대학원 각 5%",
     "가구원 수": "1인 35% · 2인 25% · 3인 25% · 4인 15%",
-    "가구소득": "기준중위소득의 30~200% 사이 (100% 근처가 가장 많음)",
+    "가구소득": "기준중위소득의 20~200% 사이 (80% 근처가 가장 많음, 50% 이하 약 8%)",
     "군 복무": "40%가 18~21개월",
 }
 
@@ -71,11 +71,12 @@ def synthetic_population(
     rng = random.Random(seed)
     people = []
     for _ in range(n):
-        age_days = rng.randint(19 * 365 + 5, 39 * 365 + 360)
+        age_days = rng.randint(19 * 365 + 5, 45 * 365 + 360)
         birth = date.fromordinal(as_of.toordinal() - age_days)
         employment = _pick(rng, EMPLOYMENT_W)
         size = _pick(rng, HOUSEHOLD_W)
-        pct = min(max(rng.triangular(30, 200, 100), 30), 200)
+        # 삼각분포(최소 20, 최대 200, 최빈 80): 저소득 대상 정책도 시연할 수 있게 하한을 낮춤
+        pct = rng.triangular(20, 200, 80)
         household = int(table.monthly(size) * pct / 100)
         if employment in ("미취업", "구직중"):
             personal = 0

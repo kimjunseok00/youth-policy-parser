@@ -20,7 +20,7 @@ from app import (
     personas,
     telemetry,
 )
-from app.ui_common import ICON, man, won
+from app.ui_common import LABEL, badge, man, node_badge, tag, won
 from app.viz import reason_to_dot
 from engine.anonymize import anonymize
 from engine.dates import full_age
@@ -35,7 +35,7 @@ from engine.schemas import (
     Verdict,
 )
 
-EVENT_ICON = {"자격 발생": "🟢", "자격 상실": "🔴", "신청 마감": "⏰"}
+EVENT_COLOR = {"자격 발생": "green", "자격 상실": "red", "신청 마감": "orange"}
 FIXABLE_ORDER = {"행동": 0, "시간": 1, "변경 어려움": 2}
 ANSWER_OPTIONS = ["모름", "예", "아니오"]
 BUSAN = "부산광역시"
@@ -92,7 +92,7 @@ def _judge(profile: Profile) -> None:
 # ---------------------------------------------------------------------------
 def render_income_calculator() -> None:
     table = load_table()
-    with st.expander(f"🧮 소득 환산기 — 내 소득은 기준중위소득 몇 %? ({table.year}년 기준)"):
+    with st.expander(f"소득 환산기 — 내 소득은 기준중위소득 몇 %인가요? ({table.year}년 기준)"):
         c1, c2 = st.columns(2)
         income = c1.number_input(
             "월소득 (원)", min_value=0, value=3_000_000, step=100_000, key="calc_income"
@@ -104,11 +104,11 @@ def render_income_calculator() -> None:
         st.metric("기준중위소득 대비", f"{pct:.1f}%")
         base = table.monthly(int(size))
         rows = [
-            f"| {p}% | {int(base * p / 100):,}원 | {'✅' if pct <= p else '❌'} |"
+            f"| {p}% | {int(base * p / 100):,}원 | {'이내' if pct <= p else '초과'} |"
             for p in (50, 60, 100, 120, 150, 200)
         ]
         st.markdown(
-            "| 정책에서 자주 쓰는 기준 | 월소득 상한 | 내 소득 |\n|---|---|---|\n" + "\n".join(rows)
+            "| 정책에서 자주 쓰는 기준 | 월소득 상한 | 내 소득 |\n|---|--:|---|\n" + "\n".join(rows)
         )
         st.caption(
             "출처: 보건복지부고시 제2025-135호. "
@@ -117,7 +117,8 @@ def render_income_calculator() -> None:
 
 
 def render_input_page() -> None:
-    st.write("**예시 인물로 채우기**")
+    st.markdown("##### 예시 인물로 채우기")
+    st.caption("발표·시연용 예시입니다. 누르면 아래 입력값이 채워집니다.")
     people = personas()
     for row_start in range(0, len(people), 3):
         cols = st.columns(3)
@@ -270,9 +271,15 @@ def render_input_page() -> None:
 def render_reason(node: ReasonNode, depth: int = 0) -> None:
     indent = "&nbsp;" * 4 * depth
     detail = f" — {node.detail}" if node.detail else ""
-    st.markdown(f"{indent}{ICON[node.verdict]} **{node.label}**{detail}", unsafe_allow_html=True)
+    st.markdown(f"{indent}{node_badge(node)} **{node.label}**{detail}", unsafe_allow_html=True)
     for child in node.children:
         render_reason(child, depth + 1)
+
+
+def _notices(node: ReasonNode) -> list[str]:
+    """사유 트리에 들어 있는 참고 안내문 (판정에는 영향 없음)."""
+    own = [node.label] if node.notice else []
+    return own + [t for c in node.children for t in _notices(c)]
 
 
 def render_policy_card(p: PolicyResult) -> None:
@@ -282,9 +289,9 @@ def render_policy_card(p: PolicyResult) -> None:
         else "상시 · 기간 공고 확인"
     )
     with st.container(border=True):
-        head = f"**{ICON[p.verdict]} {p.policy_name}**"
+        head = f"{badge(p.verdict)} &nbsp;**{p.policy_name}**"
         if not p.is_open:
-            head += " &nbsp; `신청 기간 아님`"
+            head += f" &nbsp; {tag('신청 기간 아님')}"
         st.markdown(head, unsafe_allow_html=True)
         st.caption(f"{p.agency} · {won(p.amount_krw)} · 신청 {period}")
         if p.amount_text:
@@ -294,6 +301,10 @@ def render_policy_card(p: PolicyResult) -> None:
                 f"기대 수령액 약 {man(p.expected_krw)} (확인할 조건이 적을수록 높게 계산)",
                 help="금액 × 통과 가능성. 확인할 조건 하나당 가능성을 절반으로 보는 단순 추정입니다.",
             )
+
+        notices = _notices(p.reason)
+        if notices:
+            st.caption("신청 전 공고문에서 확인할 것: " + " · ".join(notices))
 
         if p.verdict == Verdict.PASS:
             with st.expander("판정 사유 보기"):
@@ -318,9 +329,9 @@ def render_questions(result: EvaluationResult) -> None:
         return
     related = {name for _, names in questions for name in names}
     title = (
-        f"🙋 확인 질문 {len(questions)}개 — 답하면 정책 {len(related)}건의 판정이 확정돼요"
+        f"확인 질문 {len(questions)}개 — 답하면 정책 {len(related)}건의 판정이 확정됩니다"
         if questions
-        else "🙋 확인 질문 — 지금 답할 질문이 없습니다"
+        else "확인 질문 — 지금 답할 질문이 없습니다"
     )
     with st.expander(title, expanded=bool(questions)):
         with st.form("questions"):
@@ -357,7 +368,7 @@ def render_questions(result: EvaluationResult) -> None:
 
 
 def render_suggestions(ins) -> None:
-    st.subheader("💡 이것만 바꾸면")
+    st.subheader("이것만 바꾸면")
     if ins.suggestions:
         for s in ins.suggestions[:3]:
             with st.container(border=True):
@@ -375,20 +386,20 @@ def render_suggestions(ins) -> None:
     )
     if misses:
         st.markdown("**조건 하나만 어긋난 정책**")
-        badge = {
-            "행동": "🛠 바꿀 수 있음",
-            "시간": "⏳ 시간이 지나면",
-            "변경 어려움": "· 변경 어려움",
+        fix_tag = {
+            "행동": tag("바꿀 수 있음", "blue"),
+            "시간": tag("시간이 지나면"),
+            "변경 어려움": tag("변경 어려움"),
         }
         for m in misses:
             st.markdown(
-                f"- **{m.policy_name}** ({won(m.amount_krw)}) — {m.condition} · {m.gap}  "
-                f"`{badge[m.fixable_by]}`"
+                f"- **{m.policy_name}** ({won(m.amount_krw)}) — {m.condition} · {m.gap} "
+                f"{fix_tag[m.fixable_by]}"
             )
 
 
 def render_plan(ins) -> None:
-    st.subheader("🔢 최적 조합")
+    st.subheader("최적 조합")
     with_unknown = st.toggle("'확인 필요' 정책도 포함해서 계산", value=False)
     plan = ins.plan_with_unknown if with_unknown else ins.plan
     if not plan.selected:
@@ -401,20 +412,20 @@ def render_plan(ins) -> None:
             f"중복수혜 제한 때문에 {plan.simple_sum_krw - plan.total_krw:,}원이 줄어듭니다."
         )
     for r in plan.selected:
-        st.markdown(f"- {ICON[r.verdict]} **{r.policy_name}** · {won(r.amount_krw)}")
+        st.markdown(f"- {badge(r.verdict)} **{r.policy_name}** · {won(r.amount_krw)}")
     for e in plan.excluded:
         st.caption(f"제외: {e.policy_name} ({e.amount_krw:,}원) — '{e.because_of}'와 중복수혜 불가")
     st.caption(f"계산 방법: {plan.method}")
 
 
 def render_timeline(ins) -> None:
-    st.subheader("📅 앞으로의 일정")
+    st.subheader("앞으로의 일정")
     if not ins.timeline:
         st.caption("앞으로 3년 안에 자격이 바뀌거나 60일 안에 마감되는 정책이 없습니다.")
         return
     for e in ins.timeline:
         st.markdown(
-            f"- {EVENT_ICON[e.kind]} **{e.on}** · {e.kind} · {e.policy_name} "
+            f"- {tag(e.kind, EVENT_COLOR[e.kind])} **{e.on}** · {e.policy_name} "
             f"({won(e.amount_krw)}) — {e.detail}"
         )
 
@@ -430,20 +441,20 @@ def render_result_page() -> None:
         f"**{profile.sido} {profile.sigungu} / 만 {full_age(profile.birth_date, result.as_of)}세 / "
         f"{profile.employment.value} / 가구 {profile.household_size}인{mil}**"
     )
-    if btn_col.button("정보 수정 →", width="stretch"):
+    if btn_col.button("정보 수정", width="stretch"):
         st.session_state["page"] = "input"
         st.rerun()
 
-    st.divider()
-    m1, m2, m3, m4 = st.columns(4)
-    m1.metric("✅ 충족", f"{len(result.by_verdict(Verdict.PASS))}건")
-    m2.metric("❌ 불충족", f"{len(result.by_verdict(Verdict.FAIL))}건")
-    m3.metric("⚠️ 확인 필요", f"{len(result.by_verdict(Verdict.UNKNOWN))}건")
-    m4.metric(
-        "💰 최대 수령액",
-        man(ins.plan.total_krw),
-        help="지금 신청 가능한 충족 정책, 중복수혜 반영",
-    )
+    with st.container(border=True):
+        m1, m2, m3, m4 = st.columns(4)
+        m1.metric("충족", f"{len(result.by_verdict(Verdict.PASS))}건")
+        m2.metric("불충족", f"{len(result.by_verdict(Verdict.FAIL))}건")
+        m3.metric("확인 필요", f"{len(result.by_verdict(Verdict.UNKNOWN))}건")
+        m4.metric(
+            "최대 수령액",
+            man(ins.plan.total_krw),
+            help="지금 신청 가능한 충족 정책, 중복수혜 반영",
+        )
 
     render_questions(result)
 
@@ -451,7 +462,7 @@ def render_result_page() -> None:
         ["정책별 결과", "이것만 바꾸면", "최적 조합", "일정"]
     )
     with tab_result:
-        sub = st.tabs([f"{ICON[v]} {v.value} ({len(result.by_verdict(v))})" for v in Verdict])
+        sub = st.tabs([f"{LABEL[v]} {len(result.by_verdict(v))}건" for v in Verdict])
         for t, verdict in zip(sub, Verdict, strict=True):
             with t:
                 items = result.by_verdict(verdict)

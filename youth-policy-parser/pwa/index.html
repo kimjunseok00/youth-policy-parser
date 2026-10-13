@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>되나요 — 청년정책 자격 판정</title>
+  <meta name="description" content="부산 청년정책, 나도 받을 수 있는지 이유까지 알려주는 앱. 입력한 정보는 기기 밖으로 나가지 않습니다.">
+  <meta name="theme-color" content="#1F3A5F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="되나요">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <!--
+    화면 구조 (한 페이지 앱)
+    - 상단 바: 서비스 이름
+    - 본문: 탭 4개(내 정보 · 결과 · 더 받기 · 일정) 중 하나만 보인다. data-view로 전환.
+    - 하단 탭 바: 휴대폰 앱처럼 엄지로 누르는 위치
+    - 상세 시트: 정책 카드를 누르면 아래에서 올라오는 판정 사유 화면
+    내용은 전부 app.js가 그린다. 이 파일은 뼈대만 갖고 있다.
+  -->
+  <header class="appbar">
+    <span class="wordmark">되나요<b>?</b></span>
+    <span class="appbar-meta" id="asOf"></span>
+  </header>
+
+  <main id="main">
+    <!-- 처음 실행: 엔진 준비 화면 -->
+    <section class="view boot" data-view="boot" aria-live="polite">
+      <div class="boot-box">
+        <span class="wordmark big">되나요<b>?</b></span>
+        <p class="boot-tagline">청년정책, 나도 되나요?</p>
+        <div class="bar"><span id="bootBar"></span></div>
+        <p class="boot-step" id="bootStep">앱을 여는 중</p>
+        <p class="boot-note">처음 한 번은 판정 엔진을 내려받느라 몇 초 걸립니다.<br>다음부터는 바로 열립니다.</p>
+      </div>
+    </section>
+
+    <section class="view" data-view="profile" hidden></section>
+    <section class="view" data-view="result" hidden></section>
+    <section class="view" data-view="more" hidden></section>
+    <section class="view" data-view="schedule" hidden></section>
+  </main>
+
+  <nav class="tabbar" aria-label="화면 이동" hidden>
+    <button type="button" data-tab="profile">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+      <span>내 정보</span>
+    </button>
+    <button type="button" data-tab="result">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      <span>결과</span>
+    </button>
+    <button type="button" data-tab="more">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      <span>더 받기</span>
+    </button>
+    <button type="button" data-tab="schedule">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <span>일정</span>
+    </button>
+  </nav>
+
+  <div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="sheet-backdrop" data-close></div>
+    <div class="sheet-panel">
+      <div class="sheet-head">
+        <h2 id="sheetTitle"></h2>
+        <button type="button" class="icon-btn" data-close aria-label="닫기">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <div class="sheet-body" id="sheetBody"></div>
+    </div>
+  </div>
+
+  <noscript>이 앱은 자바스크립트가 필요합니다.</noscript>
+</body>
+</html>

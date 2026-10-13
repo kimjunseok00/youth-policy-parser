@@ -1,9 +1,33 @@
-# 되나요 테마 (저장소 루트의 .streamlit/config.toml과 같은 내용 유지)
+# 되나요 테마 — A안 '행정 문서형' (저장소 루트의 .streamlit/config.toml과 같은 내용 유지)
+# 색 기준표는 site/style.css의 :root 변수와 같다. 바꿀 때는 두 곳을 함께 바꾼다.
 [theme]
-primaryColor = "#1d5f8a"
-backgroundColor = "#ffffff"
-secondaryBackgroundColor = "#f2f6f9"
-textColor = "#16212b"
+base = "light"
+primaryColor = "#1F3A5F"            # 남색: 강조색은 이것 하나만 쓴다
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F4F6F9"
+textColor = "#1B2430"
+borderColor = "#D6DCE4"
+showWidgetBorder = true
+baseRadius = "0.25rem"              # 거의 각진 모서리
+linkColor = "#1F3A5F"
+font = "Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+headingFontWeights = 700
+metricValueFontWeight = 700
+# 판정 색: 충족(초록) · 불충족(빨강) · 확인 필요(황토) · 참고(회색)
+greenColor = "#1E6B3A"
+redColor = "#A32B2B"
+orangeColor = "#8A5A00"
+blueColor = "#1F3A5F"
+grayColor = "#5B6573"
+chartCategoricalColors = ["#1F3A5F", "#8A5A00", "#1E6B3A", "#A32B2B", "#5B6573"]
+
+[[theme.fontFaces]]
+family = "Pretendard"
+url = "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/woff2/PretendardVariable.woff2"
+weight = "45 920"
+
+[theme.sidebar]
+backgroundColor = "#F4F6F9"
 
 [browser]
 gatherUsageStats = false

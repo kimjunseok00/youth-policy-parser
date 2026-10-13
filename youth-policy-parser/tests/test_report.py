@@ -29,7 +29,10 @@ def test_synthetic_population_is_reproducible_and_valid():
     b = synthetic_population(50, AS_OF, seed=1)
     assert a == b
     assert all(p.personal_income_monthly <= p.household_income_monthly for p in a)
-    assert all(19 <= (AS_OF - p.birth_date).days // 365 <= 40 for p in a)
+    assert all(19 <= (AS_OF - p.birth_date).days // 365 <= 46 for p in a)
+    assert any(
+        (AS_OF - p.birth_date).days // 365 >= 40 for p in a
+    )  # 연령 상한 완화를 시험할 40대 포함
 
 
 def test_aggregate_counts_add_up():

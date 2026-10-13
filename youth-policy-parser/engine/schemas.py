@@ -124,6 +124,10 @@ class ReasonNode(BaseModel):
     category: str | None = Field(
         default=None, description="조건 유형(연령·소득·거주 등). 조합 노드(AND/OR)는 null"
     )
+    notice: bool = Field(
+        default=False,
+        description="참고 안내문(manual(\"※ ...\")). 판정에는 영향을 주지 않고 화면에 '참고'로만 표시",
+    )
     children: list[ReasonNode] = Field(default_factory=list)
 
 

@@ -38,10 +38,10 @@ def main() -> int:
     # 1단계: .env가 제대로 읽혔는지부터 확인 (가장 흔한 실패 지점)
     missing = [name for name, v in [("ONTONG_API_KEY", key), ("ONTONG_API_URL", url)] if not v]
     if missing:
-        print(f"❌ .env에서 값을 못 읽었습니다: {', '.join(missing)}")
+        print(f"[오류] .env에서 값을 못 읽었습니다: {', '.join(missing)}")
         print("   → --env-file .env 옵션을 붙였는지, 저장소 루트에서 실행했는지 확인하세요.")
         return 1
-    print(f"✅ .env 읽기 성공 (키 앞 4자리: {key[:4]}****, 파라미터 이름: {key_param})")
+    print(f"[통과] .env 읽기 성공 (키 앞 4자리: {key[:4]}****, 파라미터 이름: {key_param})")
 
     # 2단계: 요청 만들기. 명령줄의 name=value 쌍을 추가 파라미터로 붙인다.
     params = {key_param: key}
@@ -57,14 +57,14 @@ def main() -> int:
             status = resp.status
             body = resp.read().decode("utf-8", errors="replace")
     except urllib.error.HTTPError as e:
-        print(f"❌ HTTP {e.code}: {mask(e.read().decode('utf-8', 'replace')[:500], key)}")
+        print(f"[오류] HTTP {e.code}: {mask(e.read().decode('utf-8', 'replace')[:500], key)}")
         print("   → 401/403이면 키 또는 파라미터 이름 문제, 404면 주소 문제입니다.")
         return 1
     except urllib.error.URLError as e:
-        print(f"❌ 연결 실패: {e.reason}  → 주소(ONTONG_API_URL)를 확인하세요.")
+        print(f"[오류] 연결 실패: {e.reason}  → 주소(ONTONG_API_URL)를 확인하세요.")
         return 1
 
-    print(f"✅ HTTP {status}, 응답 {len(body):,}자")
+    print(f"[통과] HTTP {status}, 응답 {len(body):,}자")
     try:
         data = json.loads(body)
         print("응답 형식: JSON")

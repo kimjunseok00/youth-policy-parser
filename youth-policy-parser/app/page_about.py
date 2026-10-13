@@ -6,12 +6,14 @@ import streamlit as st
 
 from app import as_of, policies
 from app.branding import DESCRIPTION, FEEDBACK_URL, PRIVACY_URL, SERVICE_NAME, TAGLINE, TERMS_URL
-from app.ui_common import won
+from app.ui_common import page_header, won
 from engine.income import load_table
 
 
 def render() -> None:
-    st.header(f"{SERVICE_NAME} 안내")
+    page_header(
+        "서비스 안내", f"{SERVICE_NAME}가 무엇을 하는 서비스인지, 데이터 출처와 한계를 안내합니다."
+    )
     st.markdown(f"**{TAGLINE}** {DESCRIPTION}")
 
     st.subheader("이렇게 판정합니다")

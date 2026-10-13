@@ -1,11 +1,21 @@
-# 서비스 소개 사이트(site/)를 GitHub Pages로 배포한다.
+# 서비스 소개 사이트(site/)와 청년용 앱(youth-policy-parser/pwa → /app/)을 GitHub Pages로 배포한다.
 # 처음 한 번: 저장소 Settings → Pages → Source를 "GitHub Actions"로 바꿔야 동작한다.
+#
+# 배포 결과
+#   https://<계정>.github.io/youth-policy-parser/       소개 사이트
+#   https://<계정>.github.io/youth-policy-parser/app/   청년용 앱 (휴대폰에서 '홈 화면에 추가')
 name: Pages
 
 on:
   push:
     branches: [main]
-    paths: ["site/**", ".github/workflows/pages.yml"]
+    paths:
+      - "site/**"
+      - "youth-policy-parser/pwa/**"
+      - "youth-policy-parser/engine/**"
+      - "youth-policy-parser/data/**"
+      - "youth-policy-parser/scripts/build_app.py"
+      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:
@@ -25,9 +35,29 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: uv 설치
+        run: pip install uv
+      - name: 패키지 설치
+        working-directory: youth-policy-parser
+        run: uv sync --locked
+      # Pyodide 배포판(약 330MB)은 버전이 같으면 다시 받지 않는다
+      - name: Pyodide 캐시
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/doenayo
+          key: pyodide-${{ hashFiles('youth-policy-parser/scripts/build_app.py') }}
+      - name: 사이트 + 앱 묶기
+        run: |
+          mkdir -p _site
+          cp -r site/. _site/
+          cd youth-policy-parser
+          uv run python scripts/build_app.py --out ../_site/app
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4

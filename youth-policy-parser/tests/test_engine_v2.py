@@ -152,9 +152,15 @@ def test_unknown_sorted_by_expected_amount():
     assert r.results[0].expected_krw == 1_000_000
 
 
-def test_notice_manual_is_never_resolved_by_answers():
+def test_notice_manual_is_neutral_and_never_asked():
+    # 안내문은 조건이 아니므로 판정에 영향을 주지 않는다 (붙어 있어도 '충족'이 될 수 있어야 함)
     text = "※ 세부 자격은 공고문 확인"
-    assert verdict(f'manual("{text}")', answers={text: True}) == U
+    assert verdict(f'manual("{text}")') == Verdict.PASS
+    assert verdict(f'manual("{text}")', answers={text: False}) == Verdict.PASS
+    assert verdict(f'age(19..39) AND manual("{text}")') == Verdict.PASS
+    node = evaluate(profile(), [policy("n", f'manual("{text}")')], AS_OF).results[0].reason
+    node = node.children[0] if node.children else node  # 루트는 정책 요약 노드
+    assert node.notice and node.label == "세부 자격은 공고문 확인"
 
 
 def test_manual_questions_skip_notices_and_closed_policies():

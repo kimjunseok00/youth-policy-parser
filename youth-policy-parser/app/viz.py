@@ -7,12 +7,14 @@ from __future__ import annotations
 
 from engine.schemas import ReasonNode, Verdict
 
-# 판정별 색 (밝은 배경 / 테두리). 색만으로 구분하지 않도록 라벨 앞에 기호도 붙인다.
+# 판정별 색 (밝은 배경 / 테두리 / 글자 표시). 색만으로 구분하지 않도록 판정 이름을 앞에 붙인다.
+# 색은 .streamlit/config.toml의 판정 색과 같은 계열이다.
 STYLE = {
-    Verdict.PASS: ("#e6f4ea", "#2f7d4f", "✔"),
-    Verdict.FAIL: ("#fde8e7", "#b3362f", "✘"),
-    Verdict.UNKNOWN: ("#fdf1dc", "#a8650b", "?"),
+    Verdict.PASS: ("#EAF3EC", "#1E6B3A", "[충족]"),
+    Verdict.FAIL: ("#F8EAEA", "#A32B2B", "[불충족]"),
+    Verdict.UNKNOWN: ("#F6EFE0", "#8A5A00", "[확인 필요]"),
 }
+NOTICE_STYLE = ("#F4F6F9", "#5B6573", "[참고]")
 
 
 def _esc(text: str) -> str:
@@ -38,15 +40,16 @@ def reason_to_dot(tree: ReasonNode, title: str = "") -> str:
     out = [
         "digraph G {",
         "  rankdir=LR;",
-        '  node [shape=box, style="rounded,filled", fontname="sans-serif", fontsize=11];',
-        '  edge [color="#9aa5b1"];',
+        '  node [shape=box, style="filled", fontname="Pretendard, sans-serif", fontsize=11, '
+        'fontcolor="#1B2430"];',
+        '  edge [color="#9AA5B1"];',
     ]
     counter = [0]
 
     def add(node: ReasonNode, label: str) -> str:
         nid = f"n{counter[0]}"
         counter[0] += 1
-        fill, border, mark = STYLE[node.verdict]
+        fill, border, mark = NOTICE_STYLE if node.notice else STYLE[node.verdict]
         text = f"{mark} {_wrap(label)}"
         if node.detail and not node.children:
             text += f"\\n— {_wrap(node.detail, 22)}"

@@ -10,6 +10,6 @@
   "source_url": "https://young.busan.go.kr/index.nm?menuCd=273",
   "eligibility_text": "39세 이하 미취업 청년 (2026년 달라지는 청년정책 요약 안내, 150명)",
   "exclusion_text": "",
-  "condition_dsl": "age(..39)\nAND employment in [\"미취업\", \"구직중\"]\nAND manual(\"※ 세부 자격(거주 요건 등)은 공고문 확인\")",
+  "condition_dsl": "age(..39)\nAND employment in [\"미취업\", \"구직중\"]\nAND manual(\"부산 거주 등 공고문의 거주 요건 충족\")   # 거주 요건 세부 내용은 공고문 대조 필요 (docs/data_check.md)",
   "exclusive_with": []
 }

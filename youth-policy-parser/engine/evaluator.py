@@ -201,9 +201,20 @@ def _evaluate_predicate(node: Node, ctx: Context) -> ReasonNode:
             return leaf(f"'{benefit}' 수혜", _bool(receiving), detail)
 
         case Manual(text):
+            # '※'로 시작하는 안내문은 자격 조건이 아니라 "공고문도 확인하세요"라는 참고 문구다.
+            # 조건으로 계산하면 이 문구가 붙은 정책은 누구도 '충족'이 될 수 없으므로,
+            # 판정에서는 중립(충족과 같은 값)으로 두고 notice=True로 표시만 한다.
+            if is_notice(text):
+                return ReasonNode(
+                    label=text.lstrip().removeprefix(NOTICE_MARK).strip(),
+                    verdict=PASS,
+                    detail="참고 사항입니다. 신청 전 공고문에서 확인하세요.",
+                    source_quote=text,
+                    category=category,
+                    notice=True,
+                )
             # 사용자가 직접 답했으면 그 답을 쓴다 (확인 질문 기능).
-            # '※'로 시작하는 안내문은 조건이 아니라 '공고문을 보라'는 표시라서 답변을 받지 않는다.
-            if text in ctx.answers and not is_notice(text):
+            if text in ctx.answers:
                 yes = ctx.answers[text]
                 return ReasonNode(
                     label=text,
@@ -215,11 +226,7 @@ def _evaluate_predicate(node: Node, ctx: Context) -> ReasonNode:
             return ReasonNode(
                 label=text,
                 verdict=UNKNOWN,
-                detail=(
-                    "공고문이나 담당 기관에서 직접 확인해야 하는 항목입니다."
-                    if is_notice(text)
-                    else "자동 판정할 수 없는 조건입니다. '확인 질문'에 답하거나 공고문에서 확인하세요."
-                ),
+                detail="자동 판정할 수 없는 조건입니다. '확인 질문'에 답하거나 공고문에서 확인하세요.",
                 source_quote=text,
                 category=category,
             )
@@ -231,7 +238,10 @@ NOTICE_MARK = "※"
 
 
 def is_notice(manual_text: str) -> bool:
-    """manual("※ ...")은 질문이 아니라 안내문 (예: '세부 자격은 공고문 확인'). 항상 '확인 필요'로 둔다."""
+    """manual("※ ...")은 조건이 아니라 참고 안내문 (예: '세부 자격은 공고문 확인').
+
+    판정에는 영향을 주지 않고(중립), 확인 질문으로도 묻지 않는다.
+    """
     return manual_text.lstrip().startswith(NOTICE_MARK)
 
 

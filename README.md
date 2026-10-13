@@ -4,19 +4,21 @@
 
 | | 주소 |
 | --- | --- |
+| 청년용 앱 (휴대폰, 홈 화면에 설치) | https://kimjunseok00.github.io/youth-policy-parser/app/ |
+| 지자체용 웹 (리포트·시뮬레이터) | https://youth-policy-parser-kenjdcyvrqqgkjbfxtebmw.streamlit.app |
 | 서비스 소개 | https://kimjunseok00.github.io/youth-policy-parser |
-| 판정 앱 | https://youth-policy-parser-kenjdcyvrqqgkjbfxtebmw.streamlit.app |
 
 ## 저장소 구조
 
 ```
-youth-policy-parser/   판정 엔진 + Streamlit 앱 (코드·데이터·테스트)
+youth-policy-parser/   판정 엔진 + 지자체용 웹(Streamlit) + 청년용 앱(pwa/) + 데이터·테스트
 site/                  서비스 소개·개인정보처리방침·이용약관 (GitHub Pages)
-.github/workflows/     CI(린트·데이터 검증·테스트), Pages 배포
+.github/workflows/     CI(린트·데이터 검증·테스트), Pages 배포(소개 사이트 + 앱)
 .devcontainer/         Codespaces 개발 환경
 ```
 
 - 코드 설명: [`youth-policy-parser/README.md`](youth-policy-parser/README.md)
+- 청년용 앱 구조·실행: [`youth-policy-parser/docs/app.md`](youth-policy-parser/docs/app.md)
 - 배포·운영 가이드: [`youth-policy-parser/docs/deploy.md`](youth-policy-parser/docs/deploy.md)
 - DSL 명세: [`youth-policy-parser/docs/dsl_spec.md`](youth-policy-parser/docs/dsl_spec.md)
 
@@ -32,7 +34,7 @@ uv run streamlit run streamlit_app.py
 
 1. `main`에서 직접 작업하지 않고 브랜치(`feat/...`, `fix/...`, `data/...`)를 만든다.
 2. PR을 올리면 CI가 린트 · 데이터 검증 · 테스트를 자동으로 돌린다.
-3. CI가 ✅일 때만 머지한다. 머지하면 앱과 소개 사이트가 자동으로 갱신된다.
+3. CI가 성공일 때만 머지한다. 머지하면 앱·웹·소개 사이트가 자동으로 갱신된다.
 
 ## 팀
 

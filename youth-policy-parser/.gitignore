@@ -9,3 +9,6 @@ __pycache__/
 # API 키 등 비밀값은 절대 커밋하지 않는다
 .env
 .streamlit/secrets.toml
+
+# 앱 빌드 결과물 (scripts/build_app.py가 만든다)
+pwa/dist/

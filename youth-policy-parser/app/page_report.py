@@ -11,7 +11,7 @@ import pandas as pd
 import streamlit as st
 
 from app import as_of, policies, telemetry
-from app.ui_common import man
+from app.ui_common import man, page_header
 from engine.anonymize import MIN_GROUP
 from engine.report import (
     SYNTHETIC_ASSUMPTIONS,
@@ -55,10 +55,10 @@ def _summary_table(stats) -> pd.DataFrame:
 
 
 def render() -> None:
-    st.header("지자체 리포트")
-    st.caption(
+    page_header(
+        "지자체 리포트",
         "청년이 '어떤 조건 때문에' 정책을 못 받는지 집계합니다. "
-        "정책 설계·개선과 홍보 대상 선정에 쓰는 자료입니다."
+        "정책 설계·개선과 홍보 대상 선정에 쓰는 자료입니다.",
     )
 
     day = as_of()
@@ -97,10 +97,11 @@ def render() -> None:
     picked = st.selectbox("정책", names)
     s = next(x for x in stats if x.policy_name == picked)
 
-    c1, c2, c3 = st.columns(3)
-    c1.metric("충족", f"{s.rate(s.passed):.0%}")
-    c2.metric("확인 필요", f"{s.rate(s.unknown):.0%}")
-    c3.metric("불충족", f"{s.rate(s.failed):.0%}")
+    with st.container(border=True):
+        c1, c2, c3 = st.columns(3)
+        c1.metric("충족", f"{s.rate(s.passed):.0%}")
+        c2.metric("확인 필요", f"{s.rate(s.unknown):.0%}")
+        c3.metric("불충족", f"{s.rate(s.failed):.0%}")
 
     if s.fail_reasons:
         st.markdown(
@@ -137,8 +138,12 @@ def render() -> None:
     render_simulator(day)
 
 
+def _delta(n: int) -> str | None:
+    return f"+{n}명" if n > 0 else None
+
+
 def render_simulator(day) -> None:
-    st.subheader("🔧 조건 완화 시뮬레이터")
+    st.subheader("조건 완화 시뮬레이터")
     st.caption(
         "연령 상한이나 소득 기준을 바꾸면 새로 대상이 되는 인원과 추가 예산을 추정합니다. "
         "(가상 인구 기준)"
@@ -161,14 +166,20 @@ def render_simulator(day) -> None:
     people, _ = _synthetic(SYNTHETIC_N, day)
     sim = simulate(policy, people, day, age_delta, income_delta)
     added_possible = sim.after_possible - sim.before_possible
-    m1, m2, m3 = st.columns(3)
-    m1.metric("대상 가능 인원", f"{sim.after_possible}명", delta=f"+{added_possible}명")
-    m2.metric("확정 대상(충족)", f"{sim.after_pass}명", delta=f"+{sim.added}명")
+    m1, m2, m3 = st.container(border=True).columns(3)
+    # 변화가 없으면 증가 화살표를 그리지 않는다 (+0명에 초록 화살표는 오해를 부름)
+    m1.metric("대상 가능 인원", f"{sim.after_possible}명", delta=_delta(added_possible))
+    m2.metric("확정 대상(충족)", f"{sim.after_pass}명", delta=_delta(sim.added))
     if policy.amount_krw:
         m3.metric(
             "추가 예산 (최대)",
             man(added_possible * policy.amount_krw),
             help="새로 대상이 될 수 있는 인원 × 1인당 금액. 실제 신청률은 반영하지 않은 상한값.",
+        )
+    if added_possible == 0:
+        st.caption(
+            "이 범위에서는 새로 대상이 되는 사람이 없습니다. "
+            "다른 조건(취업 상태·소득 등)에서 먼저 탈락하는 사람이 많은지 위의 탈락 원인을 확인해 보세요."
         )
     with st.expander("바뀐 조건식"):
         st.code(sim.new_dsl, language=None)
