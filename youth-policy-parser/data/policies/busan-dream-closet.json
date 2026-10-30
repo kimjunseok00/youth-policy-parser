@@ -1,0 +1,15 @@
+{
+  "policy_id": "busan-dream-closet",
+  "name": "부산 드림옷장 (면접정장 무료 대여)",
+  "agency": "부산광역시 · 부산경제진흥원",
+  "region": "부산광역시",
+  "amount_krw": null,
+  "amount_text": "면접 정장·소품 무료 대여(코디·수선 포함), 연 5회, 1회 3박 4일",
+  "apply_start": null,
+  "apply_end": null,
+  "source_url": "https://v.daum.net/v/20260301080306226",
+  "eligibility_text": "15~39세 구직 청년. 부산 거주, 부산 소재 대학 재학·휴학생, 또는 부산 기업에 지원하는 청년. 고용24 구직인증번호와 면접 증빙 필요. busanjob.net 신청 (세부 조건은 2025.4 보도 기준)",
+  "exclusion_text": "",
+  "condition_dsl": "age(15..39)\nAND (region(\"부산광역시\")\n     OR manual(\"부산 소재 대학 재학·휴학 또는 부산 기업에 지원\"))\nAND employment in [\"미취업\", \"구직중\"]\nAND manual(\"면접 일정 증빙 가능\")",
+  "exclusive_with": []
+}

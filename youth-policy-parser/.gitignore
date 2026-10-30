@@ -12,3 +12,6 @@ __pycache__/
 
 # 앱 빌드 결과물 (scripts/build_app.py가 만든다)
 pwa/dist/
+
+# 온통청년 API 응답 원본 (scripts/collect.py가 만든다. 초안은 data/drafts/에 커밋)
+data/raw/

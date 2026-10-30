@@ -52,7 +52,7 @@ engine/                 판정 엔진 (Streamlit을 import하지 않음 → 브�
   dates.py · income.py  날짜 규칙 · 기준중위소득
   regions.py · benefits.py  행정구역 · 혜택 이름 사전
 data/
-  policies/             정책 1건 = JSON 1개 (현재 9건, 출처 URL 포함)
+  policies/             정책 1건 = JSON 1개 (현재 13건, 출처 URL 포함)
   personas.json         예시 인물 6명 (데모 시나리오)
   reference/            기준중위소득표, 혜택 이름 사전
 docs/                   DSL 명세, 데이터 검수 체크리스트, 배포·운영 가이드, Supabase SQL
@@ -79,5 +79,7 @@ uv run ruff check . && uv run ruff format .
 - [정책 데이터 검수 체크리스트](docs/data_check.md) — **발표·출시 전에 꼭**
 - [청년용 앱 구조·실행](docs/app.md)
 - [배포·운영 가이드](docs/deploy.md)
+- [온통청년 API로 정책 늘리기](docs/collect.md)
+- [정책 데이터 출처 대조 기록](docs/data_sources.md)
 
 판정 결과는 참고용이며, 최종 자격은 각 공고문과 담당 기관에서 확인해야 합니다.

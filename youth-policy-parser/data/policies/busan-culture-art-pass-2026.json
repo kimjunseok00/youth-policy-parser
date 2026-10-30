@@ -1,15 +1,15 @@
 {
   "policy_id": "busan-culture-art-pass-2026",
   "name": "청년문화예술패스",
-  "agency": "부산광역시",
-  "region": "부산광역시",
+  "agency": "문화체육관광부",
+  "region": "전국",
   "amount_krw": 200000,
-  "amount_text": "문화예술 관람비 20만 원",
-  "apply_start": null,
-  "apply_end": null,
-  "source_url": "https://young.busan.go.kr/index.nm?menuCd=273",
-  "eligibility_text": "19~20세 부산 청년 (2026년 달라지는 청년정책 요약 안내, 15,624명)",
+  "amount_text": "공연·전시 관람비 비수도권(부산 등) 20만 원, 수도권 15만 원. 12월 31일까지 사용",
+  "apply_start": "2026-08-10",
+  "apply_end": "2026-11-30",
+  "source_url": "https://www.seoul.co.kr/news/life/2026/08/10/20260810500229",
+  "eligibility_text": "2026년 19~20세(2006.1.1.~2007.12.31. 출생). 금액은 신청 당시 주민등록 거주지로 결정. 추가 발급 2026-08-10 ~ 11-30 선착순(예산 소진 시 마감). 상반기 발급 후 7월 31일까지 미사용으로 회수된 사람은 추가 발급 제외",
   "exclusion_text": "",
-  "condition_dsl": "age(19..20) AND region(\"부산광역시\")",
+  "condition_dsl": "born(2006-01-01..2007-12-31)   # 올해 19~20세\nAND NOT manual(\"올해 상반기에 발급받았으나 미사용으로 회수됨\")",
   "exclusive_with": []
 }

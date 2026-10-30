@@ -1,0 +1,17 @@
+{
+  "policy_id": "busan-meomuljari-loan",
+  "name": "부산 청년 임차보증금 이자 지원 (머물자리론)",
+  "agency": "부산광역시 (부산은행 대출·주택금융공사 보증)",
+  "region": "부산광역시",
+  "amount_krw": 5000000,
+  "amount_text": "임차보증금 최대 1억 원 대출(연 2~2.5%), 이자 지원 연 최대 250만 원 × 2년(연장 시 최대 4년)",
+  "apply_start": null,
+  "apply_end": null,
+  "source_url": "https://www.heraldk.com/article/2026010517480401806",
+  "eligibility_text": "신청일 기준 부산 주민등록 19~39세 무주택 청년 세대주. 본인 연소득 6,000만 원 이하(부부합산 1억 원 이하). 임차보증금 2억 원 이하, 보증금 5% 이상 납부. 매월 1일 09시~10일 18시 선착순 50명 (young.busan.go.kr)",
+  "exclusion_text": "주택 소유자, 기초 생계·주거급여 수급자, 정부 주거지원사업 참여자, 머물자리론 기존 수혜자",
+  "condition_dsl": "age(19..39)\nAND region(\"부산광역시\")\nAND income(personal) <= 5000000   # 연 6,000만 원 = 월 500만 원 (부부합산 1억 원은 확인 질문)\nAND manual(\"무주택 세대주\")\nAND manual(\"임차보증금 2억 원 이하, 보증금 5% 이상 납부\")\nAND NOT manual(\"기초 생계·주거급여 수급 또는 정부 주거지원사업 참여 중\")",
+  "exclusive_with": [
+    "busan-youth-rent-support"
+  ]
+}

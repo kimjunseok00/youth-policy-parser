@@ -1,16 +1,13 @@
-"""API 키 연결 확인 스크립트.
+"""API 키 연결 확인 스크립트 (온통청년 청년정책API).
 
-엔드포인트 주소와 인증키 파라미터 이름을 코드에 고정하지 않고 .env에서 읽는다.
-(공공데이터포털 활용신청 상세 화면에 나오는 값을 그대로 옮겨 적으면 된다)
-
-.env 예시:
-    ONTONG_API_KEY=발급받은_일반_인증키(Decoding)
-    ONTONG_API_URL=활용신청_상세에_나오는_요청주소(End_Point)
-    ONTONG_KEY_PARAM=serviceKey      # 명세에 적힌 인증키 파라미터 이름
+.env 예시 (주소와 파라미터 이름은 기본값이 있어 키만 넣어도 된다):
+    ONTONG_API_KEY=청년정책API_인증키
+    ONTONG_API_URL=https://www.youthcenter.go.kr/go/ythip/getPlcy   # 선택
+    ONTONG_KEY_PARAM=apiKeyNm                                       # 선택
 
 실행:
-    uv run --env-file .env python scripts/check_api.py
-    uv run --env-file .env python scripts/check_api.py pageNo=1 numOfRows=3   # 추가 파라미터
+    uv run --env-file .env python scripts/check_api.py pageNum=1 pageSize=3 rtnType=json
+수집은 scripts/collect.py를 쓴다 (docs/collect.md).
 """
 
 import json
@@ -32,8 +29,8 @@ def mask(text: str, secret: str) -> str:
 
 def main() -> int:
     key = os.environ.get("ONTONG_API_KEY", "").strip()
-    url = os.environ.get("ONTONG_API_URL", "").strip()
-    key_param = os.environ.get("ONTONG_KEY_PARAM", "serviceKey").strip()
+    url = os.environ.get("ONTONG_API_URL", "https://www.youthcenter.go.kr/go/ythip/getPlcy").strip()
+    key_param = os.environ.get("ONTONG_KEY_PARAM", "apiKeyNm").strip()
 
     # 1단계: .env가 제대로 읽혔는지부터 확인 (가장 흔한 실패 지점)
     missing = [name for name, v in [("ONTONG_API_KEY", key), ("ONTONG_API_URL", url)] if not v]

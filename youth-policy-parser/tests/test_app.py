@@ -55,7 +55,11 @@ def test_every_persona_reaches_result_page(index):
 def test_seoul_persona_shows_move_suggestion():
     seoul = next(i for i, p in enumerate(personas()) if p["profile"]["sido"] != "부산광역시")
     at = run_persona(seoul)
-    assert "부산광역시(으)로 전입" in " ".join(m.value for m in at.markdown)
+    # 어떤 제안이 나오는지는 그날 신청 가능한 정책에 따라 달라진다 (마감된 정책은 제안하지 않음).
+    # 여기서는 '이것만 바꾸면' 화면이 제안 또는 '없음' 안내 중 하나를 보여주는지만 본다.
+    assert any(s.value == "이것만 바꾸면" for s in at.subheader)
+    texts = " ".join(m.value for m in at.markdown) + " ".join(c.value for c in at.caption)
+    assert "(으)로 전입" in texts or "새로 받을 수 있는 정책은 없습니다" in texts
 
 
 def test_optimizer_toggle_runs():
@@ -105,6 +109,7 @@ def test_report_page_renders_with_synthetic_warning():
     at = _run_page("page_report")
     assert at.header[0].value == "지자체 리포트"
     assert any("가상 인구" in w.value for w in at.warning)
+    at.selectbox(key="sim_policy").set_value("청년잡 매칭 인턴").run()  # 연령 상한이 있는 정책
     at.slider(key="sim_age").set_value(5).run()
     assert not at.exception, at.exception
     assert any(m.label == "대상 가능 인원" for m in at.metric)
