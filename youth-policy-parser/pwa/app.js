@@ -366,7 +366,7 @@ function policyCard(p) {
       <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
       <span class="top">${badge(p.verdict)}${p.is_open ? "" : tag("신청 기간 아님")}</span>
       <span class="name">${esc(p.policy_name)}</span>
-      <span class="meta"><span class="money">${man(p.amount_krw)}</span> · ${esc(p.agency)} · ${esc(period(p))}</span>
+      <span class="meta"><span class="money">${man(p.amount_krw)}</span> · ${esc(p.agency)} · <span class="nw">${esc(period(p))}</span></span>
       <span class="why">${cardWhy(p)}</span>
     </button>`;
 }
