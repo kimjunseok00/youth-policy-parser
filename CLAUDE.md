@@ -40,7 +40,7 @@ youth-policy-parser/
   pwa/                    청년용 앱 원본, scripts/build_app.py가 pwa/dist/로 빌드
   ingest/ontong.py        온통청년 API 응답 → 검수용 초안
   scripts/                validate.py, collect.py, promote.py, build_app.py, check_api.py
-  data/policies/          정식 정책 (1건 = JSON 1개, 현재 13건)
+  data/policies/          정식 정책 (1건 = JSON 1개, 현재 36건)
   data/drafts/            API 수집 초안 (검수 전, 앱에 안 나옴)
   docs/                   dsl_spec, data_check(검수 체크리스트), deploy, app, collect
   tests/                  pytest (페르소나 회귀 스냅샷 포함)
@@ -91,7 +91,7 @@ uv run --env-file .env python scripts/collect.py --inspect                      
 ## 다음 할 일
 
 1. `collect.py --inspect`로 온통청년 실제 응답 확인 → 0건이면 `ingest/ontong.py`를 실제 구조에 맞게 수정
-2. 수집 → 초안 검수 → `promote.py`로 정책 13건 → 30건 이상 (데이터 담당)
+2. 수집 → 초안 검수 → `promote.py`로 정책 13건 → 36건 (완료: 온통청년 API 후보 22건 중 15건을 공식 사이트와 대조해 반영, 7건 보류·제외. `docs/data_sources.md` 참조)
 3. 9건 공식 출처 대조는 2026-10-13에 반영함 (`docs/data_sources.md`). 표의 '아직 확인 못 한 것'과 공식 URL 직접 확인이 남음
 4. 머지 후 Pages 배포 확인, 휴대폰에서 앱 설치 확인, 발표 전날 `docs/deploy.md` 점검표
 5. `site/privacy.html` 개인정보 보호책임자 빈칸 채우기
