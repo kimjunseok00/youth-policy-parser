@@ -273,3 +273,16 @@ dl.facts dd { margin: 0; }
 
 /* 금액은 줄바꿈하지 않는다 ('360만 / 원'으로 끊기지 않게) */
 .plan-list b, .money, .nw { white-space: nowrap; }
+
+/* ---------- 설치 안내 ---------- */
+.install {
+  max-width: 520px; margin: 12px auto 0; padding: 18px 20px;
+  width: calc(100% - 40px);
+  background: var(--accent-soft); border-radius: var(--radius-lg);
+  display: grid; gap: 8px;
+}
+.install-title { margin: 0; font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
+.install-desc { margin: 0; color: var(--muted); font-size: 13px; }
+.install-steps { margin: 4px 0 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; }
+.install-go { min-height: 48px; margin-top: 6px; }
+.install-close { justify-self: start; border: 0; background: none; color: var(--muted); font-size: 13px; padding: 6px 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }

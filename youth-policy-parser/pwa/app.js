@@ -7,6 +7,8 @@
 // - 이모티콘을 쓰지 않는다. 판정은 글자 배지(충족·불충족·확인 필요·참고)로 표시한다.
 // - 화면에 넣는 모든 글자는 esc()를 거친다 (정책 데이터에 HTML이 섞여도 실행되지 않게).
 
+import { initInstall } from "./install.js";
+
 const STORE_KEY = "doenayo.v1";
 const BUSAN = "부산광역시";
 const VERDICT = {
@@ -613,3 +615,4 @@ if ("serviceWorker" in navigator && (location.protocol === "https:" || location.
   });
 }
 start();
+initInstall();
