@@ -19,6 +19,34 @@ from datetime import date
 
 from engine.regions import BUSAN_SIGUNGU
 
+
+_MD_LINK = re.compile(r"\[[^\]]*\]\((https?://[^)\s]+)\)")
+_URL_RE = re.compile(r"(?:https?://)?[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+(?:[/?#]\S*)?")
+
+
+def clean_url(raw: str | None, fallback: str = "https://www.youthcenter.go.kr") -> str:
+    """API가 준 URL 필드를 https:// 로 시작하는 순수 URL 하나로 정리한다.
+
+    API는 `[www.hf.go.kr](https://www.hf.go.kr)` 같은 마크다운 링크, `www.kiat.or.kr` 같은
+    스킴 없는 주소, `http://` 주소를 섞어서 준다. 앱은 https 링크만 허용하므로
+    마크다운이면 괄호 안 주소를 꺼내고, 스킴이 없으면 https를 붙이고, http는 https로 올린다.
+    URL로 볼 수 없는 값이면 fallback(온통청년 메인)을 돌려준다.
+    """
+    if not raw:
+        return fallback
+    raw = raw.strip()
+    md = _MD_LINK.search(raw)
+    if md:
+        raw = md.group(1)
+    m = _URL_RE.search(raw)
+    if not m:
+        return fallback
+    url = m.group(0).rstrip(".,;)")
+    url = re.sub(r"^http://", "https://", url)
+    if not url.startswith("https://"):
+        url = "https://" + url
+    return url
+
 NAME_KEYS = ("plcyNm", "plcyNo")  # 이 필드가 있는 dict 목록 = 정책 목록
 
 # 법정동코드 앞 2자리 → 시·도 (2023 강원특별자치도 51, 2024 전북특별자치도 52 반영)
@@ -278,9 +306,7 @@ def draft(item: dict) -> dict:
         if text(item, "aplyPrdSeCd") == ALWAYS_OPEN
         else parse_period(item.get("aplyYmd"))
     )
-    source = (
-        text(item, "refUrlAddr1") or text(item, "aplyUrlAddr") or "https://www.youthcenter.go.kr"
-    )
+    source = clean_url(text(item, "refUrlAddr1") or text(item, "aplyUrlAddr"))
     review.append("지원 금액(amount_krw): 1인 총 수령액으로 계산해 넣기")
     policy = {
         "policy_id": policy_id(item),

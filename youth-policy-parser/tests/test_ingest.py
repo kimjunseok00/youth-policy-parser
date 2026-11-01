@@ -11,6 +11,7 @@ import pytest
 from engine.parser import parse
 from engine.schemas import Policy
 from ingest.ontong import (
+    clean_url,
     classify_region,
     draft,
     find_items,
@@ -133,3 +134,19 @@ def test_is_open():
     assert not is_open({"aplyPrdSeCd": "0057001", "aplyYmd": "20260301 ~ 20260331"}, today)
     assert is_open({"aplyPrdSeCd": "0057001", "aplyYmd": "20261201 ~ 20261215"}, today)  # 예정
     assert is_open({"aplyPrdSeCd": "0057001", "aplyYmd": ""}, today)  # 읽을 수 없으면 사람이 확인
+
+
+@pytest.mark.parametrize(
+    ("raw", "expected"),
+    [
+        ("[www.hf.go.kr](https://www.hf.go.kr)", "https://www.hf.go.kr"),
+        ("www.kiat.or.kr", "https://www.kiat.or.kr"),
+        ("http://www.moel.go.kr/policy/list18.do", "https://www.moel.go.kr/policy/list18.do"),
+        ("https://www.molit.go.kr/", "https://www.molit.go.kr/"),
+        ("", "https://www.youthcenter.go.kr"),
+        (None, "https://www.youthcenter.go.kr"),
+        ("문의 바랍니다", "https://www.youthcenter.go.kr"),
+    ],
+)
+def test_clean_url(raw, expected):
+    assert clean_url(raw) == expected

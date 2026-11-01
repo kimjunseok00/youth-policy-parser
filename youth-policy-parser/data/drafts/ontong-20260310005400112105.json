@@ -14,7 +14,7 @@
     "amount_text": "- 단기 집중교육 프로그램 개발, 운영 지원 - 이수자 관리 및 취업 컨설팅 등 지원 - 학사 운영 유연화, 비교과 활동 학점 인정 등 제도 개선",
     "apply_start": null,
     "apply_end": null,
-    "source_url": "www.kiat.or.kr",
+    "source_url": "https://www.kiat.or.kr",
     "eligibility_text": "대학생을 대상으로 대학-기업이 함께 1년 이내 단기 집중교육 프로그램을 개발,운영하여 첨단인재 및 AI융합 실무인재 양성",
     "exclusion_text": "",
     "condition_dsl": "employment in [\"구직중\", \"미취업\"]   # API jobCd\nAND education in [\"대학재학\", \"대학휴학\", \"졸업예정\"]   # API schoolCd",

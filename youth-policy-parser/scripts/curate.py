@@ -23,7 +23,7 @@ from engine.schemas import Policy  # noqa: E402
 
 OVERRIDABLE = (
     "name", "amount_krw", "amount_text", "condition_dsl", "eligibility_text",
-    "exclusion_text", "exclusive_with", "apply_start", "apply_end",
+    "exclusion_text", "exclusive_with", "apply_start", "apply_end", "source_url",
 )  # fmt: skip
 
 

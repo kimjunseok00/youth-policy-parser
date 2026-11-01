@@ -15,7 +15,7 @@
     "amount_text": "1. 예비종사자 대학 맞춤형 교육 - 취업 희망 업종별 요구역량 이해도 제고를 위한 현직자 이론강의 및 실무 체험 프로그램 2. 예비종사자 오픈형 교육 - 관광산업 트렌트, 관광 유관 신직무, 생성형 AI 활용 등 주제별·수준별 역량 개발 교육 3. 현장연계 실무 포트폴리오 부트캠프 - 현직자 멘토의 심층 피드백을 통한 주제별 프로젝트 고도화 및 실무 적합성 검토",
     "apply_start": "2026-04-01",
     "apply_end": "2026-11-30",
-    "source_url": "http://pf.kakao.com/_xixmVtb",
+    "source_url": "https://pf.kakao.com/_xixmVtb",
     "eligibility_text": "관광분야 예비 취·창업자 대상 데이터, 디지털 채널, 관광분야 신(新)직무 등 관광+ICT 및 트렌드 융합형 교육 지원\n관광 분야 취업 및 창업 관심자",
     "exclusion_text": "",
     "condition_dsl": "age(19..34)   # API sprtTrgtMinAge/MaxAge\nAND (employment in [\"구직중\", \"미취업\", \"자영업\", \"재직\", \"프리랜서\"] OR manual(\"취업 상태: 일용근로자·(예비)창업자·기타 해당\"))   # API jobCd\nAND (education in [\"고졸\", \"대학원\", \"대학재학\", \"대학졸업\", \"대학휴학\", \"졸업예정\"] OR manual(\"학력: 고졸 미만·고교 재학·고졸 예정·기타 해당\"))   # API schoolCd\nAND manual(\"추가 자격: 관광 분야 취업 및 창업 관심자\")   # API addAplyQlfcCndCn",

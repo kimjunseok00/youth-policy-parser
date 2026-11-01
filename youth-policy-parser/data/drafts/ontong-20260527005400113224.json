@@ -1,18 +1,14 @@
 {
-  "status": "draft",
+  "status": "promoted",
   "source": "온통청년 OpenAPI",
-  "review": [
-    "내년(2027년) 기준 출생연도 — 해마다 달라짐",
-    "연 3회 한도와 예산 소진 여부 (q-net.or.kr)",
-    "응시료 50% 금액 예시를 넣을지"
-  ],
+  "review": [],
   "policy": {
     "policy_id": "ontong-20260527005400113224",
     "name": "청년 국가기술자격 응시료 지원 사업",
     "agency": "고용노동부",
     "region": "전국",
     "amount_krw": null,
-    "amount_text": "한국산업인력공단 국가기술자격 시험 응시료의 50% 지원, 1인당 연 3회. 예산 242억 원 소진 시 마감. Q-Net 원서접수 결제 때 자동 적용",
+    "amount_text": "한국산업인력공단이 시행하는 국가기술자격 시험 응시료의 50% 지원, 1인당 연 3회. 큐넷 원서접수 결제 때 별도 신청 없이 자동 적용. 예산 소진 시 마감",
     "apply_start": null,
     "apply_end": null,
     "source_url": "https://www.q-net.or.kr/man004.do?id=man00402&gSite=Q&gId=",

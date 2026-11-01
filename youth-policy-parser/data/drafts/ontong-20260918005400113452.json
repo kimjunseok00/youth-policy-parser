@@ -15,7 +15,7 @@
     "amount_text": "- (목적) 국무총리는 청년의 참여를 바탕으로 청년이 살기좋은 환경과 혁신성장 동력을 갖춘 청년친화도시를 지정하고, 타지역으로 확산  - (근거) 청년기본법 제24조의6  - (지정대상) 기초지자체중 매년 3개씩 지정    * 시군구(226개), 세종특별자치시, 제주특별자치도  - (지정기간) 지정일로부터 5년  - (지원내용) 청년친화도시 추진목적 달성할 수 있도록 행정 및 재정적 지원",
     "apply_start": null,
     "apply_end": null,
-    "source_url": "www.opm.go.kr",
+    "source_url": "https://www.opm.go.kr",
     "eligibility_text": "청년정책을 우수하게 추진하는 기초지방자치단체를 국무총리가 청년친화도시로 지정하여 지원",
     "exclusion_text": "",
     "condition_dsl": "manual(\"소득: 지방자치단체 대상 공모\")   # API earnEtcCn",

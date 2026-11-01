@@ -14,7 +14,7 @@
     "amount_text": "국토교통분야 박사학위 취득 후 7년이내인 신진연구자에게 R&D 지원",
     "apply_start": "2027-01-01",
     "apply_end": "2027-01-31",
-    "source_url": "www.kaia.re.kr",
+    "source_url": "https://www.kaia.re.kr",
     "eligibility_text": "국토교통분야 박사학위 취득 후 7년이내인 신진연구자에게 R&D 지원",
     "exclusion_text": "",
     "condition_dsl": "education in [\"대학원\"]   # API schoolCd",

@@ -15,7 +15,7 @@
     "amount_text": "청년자산형성 5종 지원사업 간 연계 강화 방안 연구용역 진행 중('26년) (5종 : 청년미래적금, 청년내일저축계좌, 장병내일준비적금, 청년주택드림청약통장, 청년형 ISA)",
     "apply_start": null,
     "apply_end": null,
-    "source_url": "http://opm.go.kr",
+    "source_url": "https://opm.go.kr",
     "eligibility_text": "중앙정부의 청년 자산형성 지원사업 간 연계 강화 방안 검토",
     "exclusion_text": "",
     "condition_dsl": "manual(\"소득: 미정\")   # API earnEtcCn",

@@ -14,7 +14,7 @@
     "amount_text": "발달장애인을 대상으로 다양한 분야의 문화예술교육을 실시하여, 개인의 특성, 역량을 고려한 전문예술 활동 참여지원",
     "apply_start": null,
     "apply_end": null,
-    "source_url": "http://www.saca.or.kr/",
+    "source_url": "https://www.saca.or.kr/",
     "eligibility_text": "발달 장애인 문화예술학교 지원",
     "exclusion_text": "",
     "condition_dsl": "manual(\"특화 대상: 장애인 해당\")   # API sbizCd",

@@ -1,23 +1,20 @@
 {
-  "status": "draft",
+  "status": "promoted",
   "source": "온통청년 OpenAPI",
-  "review": [
-    "상세 조건은 시중은행·한국주택금융공사에서 확인하라고만 안내됨 (hf.go.kr)",
-    "대출 상품(버팀목·월세대출 등)과의 관계"
-  ],
+  "review": [],
   "policy": {
     "policy_id": "ontong-20260923005400113576",
     "name": "청년 전월세 대출보증",
     "agency": "금융위원회",
     "region": "전국",
     "amount_krw": null,
-    "amount_text": "청년 전월세 대출에 대한 보증 지원. 보증한도 전세 최대 2억 원·월세 최대 1,200만 원. 전세 보증금 수도권 7억·지방 5억 원 이하, 월세 보증금 1억 원 이하·월세 70만 원 이하. 보증이라 수령액으로 환산하지 않음",
+    "amount_text": "주택금융공사 특례전세자금보증(무주택 청년): 보증한도 최대 2억 원(신혼가구·미성년 자녀 가구는 최대 3억 원). 보증이라 수령액으로 환산하지 않음. 월세 보증은 별도 상품(월세자금보증)",
     "apply_start": null,
     "apply_end": null,
-    "source_url": "www.hf.go.kr",
+    "source_url": "https://www.hf.go.kr/ko/sub02/sub02_01_04.do",
     "eligibility_text": "청년의 주거비 부담을 경감하기 위해 전월세 대출에 대한 신용보증을 지원",
     "exclusion_text": "",
-    "condition_dsl": "age(19..34)\nAND income(personal) <= 5833333   # 본인 연소득 7,000만 원 이하 = 월 약 583만 원 (배우자 합산은 아래 확인)\nAND manual(\"배우자가 있으면 본인·배우자 합산 연소득 7,000만 원 이하\")\nAND manual(\"무주택 청년\")",
+    "condition_dsl": "age(19..39)   # 신청일 기준 만 39세 이하 무주택자 (공사 안내. 온통청년 API의 19~34세와 다름)\nAND income(personal) <= 5833333   # 연소득 7천만 원 이하 = 월 약 583만 원\nAND manual(\"본인과 배우자 합산 연소득 7천만 원 이하 (신혼가구는 본인 연소득 7천만 원 이하면 충족)\")\nAND manual(\"무주택자\")\nAND manual(\"※ 보증 요건을 충족해도 은행 내규와 심사에 따라 대출 가능 여부가 달라질 수 있음\")",
     "exclusive_with": []
   },
   "raw": {
