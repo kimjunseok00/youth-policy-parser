@@ -1,0 +1,15 @@
+{
+  "policy_id": "ontong-20260429005400212911",
+  "name": "부산청년 취업성공풀(Full) 패키지 지원",
+  "agency": "부산광역시 청년산학국 청년정책과",
+  "region": "부산광역시",
+  "amount_krw": 1000000,
+  "amount_text": "구직전담매니저를 통해 취업 후 1년간 고용 시 1인당 최대 100만 원 지원 (청년취업도약지원금 + 직장적응지원 + 청년일자리도약장려금)",
+  "apply_start": null,
+  "apply_end": null,
+  "source_url": "https://busanjob.net",
+  "eligibility_text": "미취업 청년들에게 취업성공부터 직장적응, 고용유지까지 맞춤형 \n 패키지 지원을 통한 구직활동 촉진 및 안정적 정착 지원",
+  "exclusion_text": "",
+  "condition_dsl": "age(15..39)\nAND region(\"부산광역시\")\nAND employment in [\"구직중\", \"미취업\"]\nAND manual(\"부산일자리정보망 JOB프로그램 참여 및 구직전담매니저를 통한 취업 연계\")",
+  "exclusive_with": []
+}

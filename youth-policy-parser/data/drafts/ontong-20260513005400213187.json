@@ -1,11 +1,7 @@
 {
-  "status": "draft",
+  "status": "promoted",
   "source": "온통청년 OpenAPI",
-  "review": [
-    "연소득 5천/6천/7.5천만 원의 기준 연도(근로소득 총급여인지)",
-    "예산 소진 여부 — 접수 중인지 구·군청에 확인 (khug.or.kr, busan.go.kr/depart/reguarantee01)",
-    "신혼부부 보증료 할인 가입자 예외 문구"
-  ],
+  "review": [],
   "policy": {
     "policy_id": "ontong-20260513005400213187",
     "name": "부산 전세보증금 반환보증 보증료 지원",

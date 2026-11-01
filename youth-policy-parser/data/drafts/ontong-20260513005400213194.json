@@ -1,11 +1,7 @@
 {
-  "status": "draft",
+  "status": "promoted",
   "source": "온통청년 OpenAPI",
-  "review": [
-    "사업별 공모 일정·지원 금액 (부산문화재단 공고)",
-    "신청 자격이 예술가로 한정되는 사업과 일반 청년 참여 사업의 구분",
-    "'부산 청년'의 거주 요건"
-  ],
+  "review": [],
   "policy": {
     "policy_id": "ontong-20260513005400213194",
     "name": "부산 청년문화육성 지원",
@@ -18,7 +14,7 @@
     "source_url": "https://young.busan.go.kr/index.nm?menuCd=235",
     "eligibility_text": "부산지역 청년 및 청년예술인을 위한 청년문화육성 지원",
     "exclusion_text": "",
-    "condition_dsl": "age(18..39)\nAND region(\"부산광역시\")\nAND manual(\"청년 예술가·연출가 등 사업별 공모 대상 (부산문화재단 공모 공고)\")",
+    "condition_dsl": "age(18..39)   # 소득 기준 없음\nAND (region(\"부산광역시\") OR manual(\"부산에서 활동하는 청년예술가\"))\nAND manual(\"사업별 공모 선정 필요 (부산문화재단 공모: 청년예술가 창작활동, 청년연출가 작품제작 등, 매년 2~3월 선발)\")",
     "exclusive_with": []
   },
   "raw": {

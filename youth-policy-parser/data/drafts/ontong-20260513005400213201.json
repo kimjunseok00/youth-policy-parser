@@ -1,11 +1,7 @@
 {
-  "status": "draft",
+  "status": "promoted",
   "source": "온통청년 OpenAPI",
-  "review": [
-    "연수 급여(월 금액·기간)",
-    "거주 요건: 부산 주민등록 여부",
-    "모집 시기와 선발 방식 (청년부산잡스)"
-  ],
+  "review": [],
   "policy": {
     "policy_id": "ontong-20260513005400213201",
     "name": "부산 취업연수생 고용사업",

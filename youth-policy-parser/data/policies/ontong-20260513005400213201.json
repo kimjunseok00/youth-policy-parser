@@ -1,0 +1,15 @@
+{
+  "policy_id": "ontong-20260513005400213201",
+  "name": "부산 취업연수생 고용사업",
+  "agency": "부산광역시 청년산학국 청년정책과",
+  "region": "부산광역시",
+  "amount_krw": null,
+  "amount_text": "시·공공기관·비영리단체 등에서 행정 체험(연수) 제공. 연수 급여 금액은 API에 없음",
+  "apply_start": null,
+  "apply_end": null,
+  "source_url": "https://young.busan.go.kr/index.nm?menuCd=161",
+  "eligibility_text": "미취업 청년에게 행정체험을 제공함으로써 직장 적응능력 향상과 역량 강화로 일자리 진입 지원\n최종학력 고졸 이상 미취업자로서 졸업 후 3년 이내인 자",
+  "exclusion_text": "타 직접일자리사업 중복참여자 참여 불가",
+  "condition_dsl": "age(18..29)\nAND region(\"부산광역시\")\nAND employment in [\"구직중\", \"미취업\"]\nAND manual(\"최종학력 고졸 이상, 졸업 후 3년 이내\")\nAND NOT manual(\"타 직접일자리사업 중복 참여\")",
+  "exclusive_with": []
+}

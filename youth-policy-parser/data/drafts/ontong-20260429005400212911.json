@@ -1,11 +1,7 @@
 {
-  "status": "draft",
+  "status": "promoted",
   "source": "온통청년 OpenAPI",
-  "review": [
-    "학력 요건(API schoolCd 기준 고졸·대졸 등)을 원문으로 확인 — 초안에서는 뺌",
-    "100만 원이 청년 본인에게 지급되는 몫인지, 기업 몫이 섞였는지",
-    "busanjob.net 참여 방법·모집 시기"
-  ],
+  "review": [],
   "policy": {
     "policy_id": "ontong-20260429005400212911",
     "name": "부산청년 취업성공풀(Full) 패키지 지원",

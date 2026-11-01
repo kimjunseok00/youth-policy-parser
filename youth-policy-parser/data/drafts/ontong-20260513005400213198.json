@@ -1,12 +1,7 @@
 {
-  "status": "draft",
+  "status": "promoted",
   "source": "온통청년 OpenAPI",
-  "review": [
-    "신청 8/1~12/31 확인 (young.busan.go.kr)",
-    "소득 120%의 가구 범위(본인/가구)",
-    "'일하는 청년' 요건의 정확한 범위(재직·자영업 등)",
-    "'유사사업'이 어떤 사업인지(청년월세 등)"
-  ],
+  "review": [],
   "policy": {
     "policy_id": "ontong-20260513005400213198",
     "name": "부산 청년 중개보수 및 이사비 지원",

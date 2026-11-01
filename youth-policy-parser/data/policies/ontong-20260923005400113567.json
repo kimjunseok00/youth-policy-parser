@@ -1,0 +1,15 @@
+{
+  "policy_id": "ontong-20260923005400113567",
+  "name": "청년 특례 채무조정",
+  "agency": "금융위원회",
+  "region": "전국",
+  "amount_krw": null,
+  "amount_text": "신청비 면제, 상환유예 확대, 이자율·원금 감면 우대(개인워크아웃 원금 0~70% 감면, 최장 10년 분할상환 등). 감면율은 채무내역·소득에 따라 달라 환산하지 않음",
+  "apply_start": null,
+  "apply_end": null,
+  "source_url": "https://www.ccrs.or.kr/cms/com/index.do?MENU_ID=1940",
+  "eligibility_text": "채무상환에 어려움을 겪는 청년이 채무조정 제도 이용 시, 신청비 면제, 상환유예 확대 및 이자율·원금 감면 우대 등을 지원하여 채무부담을 완화하고 경제적 재기를 지원",
+  "exclusion_text": "",
+  "condition_dsl": "(education in [\"대학재학\", \"대학원\"]   # 대학(원)생: 연령 제한 없음\n OR (education in [\"대학휴학\"] AND manual(\"휴학생도 재학생 요건에 포함되는지 신용회복위원회(1375) 상담 확인\"))\n OR (age(..34) AND employment in [\"미취업\", \"구직중\"]))   # 미취업 청년: 34세 이하\nAND manual(\"채권금융회사 채무를 90일 이상 연체 (개인워크아웃 특례). 연체 31~89일은 사전채무조정 등 별도 제도\")",
+  "exclusive_with": []
+}

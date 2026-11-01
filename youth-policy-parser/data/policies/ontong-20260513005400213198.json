@@ -1,0 +1,15 @@
+{
+  "policy_id": "ontong-20260513005400213198",
+  "name": "부산 청년 중개보수 및 이사비 지원",
+  "agency": "부산광역시 청년산학국 청년정책과",
+  "region": "부산광역시",
+  "amount_krw": 400000,
+  "amount_text": "부동산 중개보수 및 실제 소요된 이사 비용 실비 지원, 최대 40만 원 (택배비·청소비·개인 차량 렌트비 등 제외)",
+  "apply_start": "2026-08-01",
+  "apply_end": "2026-12-31",
+  "source_url": "https://young.busan.go.kr/index.nm",
+  "eligibility_text": "부산시 전입, 부산시 내 이사 후 전입 신고한 일하는 청년에게 이사비 지원\n- ‘25. 1. 1.이후 부산시 전입 및 부산시 내 이사 후 전입신고\r\n - 주택 거래금액 1.5억원 이하 전・월세 거주\r\n - 무주택자, 부모 별도 거주",
+  "exclusion_text": "※ 유사사업 수혜이력이 있는 자 등",
+  "condition_dsl": "age(18..39)\nAND region(\"부산광역시\")\nAND income_pct(household) <= 120   # 기준중위소득 120% 이하 (월 3,078천 원은 1인 가구 기준)\nAND manual(\"일하는 청년으로서 '25.1.1. 이후 부산시 전입 또는 부산시 내 이사 후 전입신고\")\nAND manual(\"주택 거래금액 1.5억 원 이하 전·월세 거주, 무주택자, 부모와 별도 거주\")\nAND NOT manual(\"유사사업 수혜 이력\")",
+  "exclusive_with": []
+}
