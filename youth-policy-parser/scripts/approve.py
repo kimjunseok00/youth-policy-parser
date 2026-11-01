@@ -41,7 +41,9 @@ def main() -> int:
     known = {no: f for f, edits in files.items() for no in edits}
     if args.all:
         if not args.unverified:
-            print("[멈춤] --all 은 공식 확인 없이 전부 올립니다. 그래도 하려면 --unverified 를 붙이세요.")
+            print(
+                "[멈춤] --all 은 공식 확인 없이 전부 올립니다. 그래도 하려면 --unverified 를 붙이세요."
+            )
             return 1
         wanted = list(known)
     else:

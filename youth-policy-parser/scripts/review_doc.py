@@ -1,6 +1,6 @@
 """data/curation/<batch>.json → docs/review_<batch>.md (데이터 담당용 공식 페이지 확인 체크리스트).
 
-    uv run python scripts/review_doc.py data/curation/batch2.json
+uv run python scripts/review_doc.py data/curation/batch2.json
 """
 
 from __future__ import annotations
@@ -30,7 +30,11 @@ def main() -> int:
     for no, e in edits.items():
         d = json.loads((ROOT / "data" / "drafts" / f"ontong-{no}.json").read_text("utf-8"))
         raw = d["raw"]
-        urls = {d["policy"]["source_url"], raw.get("aplyUrlAddr", "").strip(), raw.get("refUrlAddr1", "").strip()}
+        urls = {
+            d["policy"]["source_url"],
+            raw.get("aplyUrlAddr", "").strip(),
+            raw.get("refUrlAddr1", "").strip(),
+        }
         urls = sorted(u for u in urls if u)
         todo = "<br>".join("· " + x for x in e["review"])
         rows.append(f"| {d['policy']['name']} | {'<br>'.join(urls)} | {todo} |")
