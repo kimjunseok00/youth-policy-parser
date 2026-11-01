@@ -2,9 +2,8 @@
   "status": "draft",
   "source": "온통청년 OpenAPI",
   "review": [
-    "연령: 만 나이 기준인지, 군 복무 연장(military=)이 있는지 공고문 확인",
-    "소득: API 연소득 상한 3500 — 단위(만 원)와 본인/가구 기준을 공고문으로 확인",
-    "지원 금액(amount_krw): 1인 총 수령액으로 계산해 넣기"
+    "대상 유형(대학(원)생·미취업·중소기업 재직 등)과 대출 한도·금리 (kinfa.or.kr)",
+    "연소득 3,500만 원 기준이 총급여인지"
   ],
   "policy": {
     "policy_id": "ontong-20260724005400113307",
@@ -12,13 +11,13 @@
     "agency": "금융위원회",
     "region": "전국",
     "amount_krw": null,
-    "amount_text": "대학생·청년층의 금융애로를 해소하고 향후 제도권 금융으로 안착할 수 있도록 지원",
+    "amount_text": "저소득 청년층을 위한 보증부 대출 (서민금융진흥원 보증 후 협약은행 대출). 한도·금리는 API에 없음",
     "apply_start": null,
     "apply_end": null,
     "source_url": "https://www.kinfa.or.kr/financialProduct/hessalLoanYoos.do",
     "eligibility_text": "저소득 청년층을 위한 보증부대출",
     "exclusion_text": "",
-    "condition_dsl": "age(19..34)   # API sprtTrgtMinAge/MaxAge\nAND income(personal) <= 2916666   # API 연소득 3500만 원 이하 → 월 환산",
+    "condition_dsl": "age(19..34)\nAND income(personal) <= 2916666   # API 연소득 3,500만 원 이하 = 월 약 292만 원\nAND manual(\"※ 대학생·미취업·재직 청년 등 세부 대상 유형과 한도는 서민금융진흥원 햇살론유스 안내에서 확인\")",
     "exclusive_with": []
   },
   "raw": {

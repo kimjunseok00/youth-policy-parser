@@ -2,9 +2,8 @@
   "status": "draft",
   "source": "온통청년 OpenAPI",
   "review": [
-    "연령: 만 나이 기준인지, 군 복무 연장(military=)이 있는지 공고문 확인",
-    "소득: 기준중위소득 %면 income_pct(household) 조건으로 바꾸기",
-    "지원 금액(amount_krw): 1인 총 수령액으로 계산해 넣기"
+    "상세 조건은 시중은행·한국주택금융공사에서 확인하라고만 안내됨 (hf.go.kr)",
+    "대출 상품(버팀목·월세대출 등)과의 관계"
   ],
   "policy": {
     "policy_id": "ontong-20260923005400113576",
@@ -12,13 +11,13 @@
     "agency": "금융위원회",
     "region": "전국",
     "amount_krw": null,
-    "amount_text": "ㅁ대상: 연소득 7천만원 이하인 만 19~34세 무주택 청년  ㅇ (전세) 보증금 수도권 7억원 이하, 지방 5억원 이하  ㅇ (월세) 보증금 1억원 이하 및 월세 70만원 이하 ㅁ보증한도*: (전세) 최대 2억원, (월세) 최대 1,200만원  *대출한도와 동일(임차보증금, 소득 등에 따라 결정) ㅁ기타조건: 기타 상세조건은 시중은행 또는 한국주택금융공사를 통해 확인하여 주시기 바랍니다.",
+    "amount_text": "청년 전월세 대출에 대한 보증 지원. 보증한도 전세 최대 2억 원·월세 최대 1,200만 원. 전세 보증금 수도권 7억·지방 5억 원 이하, 월세 보증금 1억 원 이하·월세 70만 원 이하. 보증이라 수령액으로 환산하지 않음",
     "apply_start": null,
     "apply_end": null,
     "source_url": "www.hf.go.kr",
     "eligibility_text": "청년의 주거비 부담을 경감하기 위해 전월세 대출에 대한 신용보증을 지원",
     "exclusion_text": "",
-    "condition_dsl": "age(19..34)   # API sprtTrgtMinAge/MaxAge\nAND manual(\"소득: 본인 및 배우자 합산 연소득 7,000만원 이하\")   # API earnEtcCn",
+    "condition_dsl": "age(19..34)\nAND income(personal) <= 5833333   # 본인 연소득 7,000만 원 이하 = 월 약 583만 원 (배우자 합산은 아래 확인)\nAND manual(\"배우자가 있으면 본인·배우자 합산 연소득 7,000만 원 이하\")\nAND manual(\"무주택 청년\")",
     "exclusive_with": []
   },
   "raw": {

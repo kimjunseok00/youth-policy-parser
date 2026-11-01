@@ -2,9 +2,9 @@
   "status": "draft",
   "source": "온통청년 OpenAPI",
   "review": [
-    "연령: 만 나이 기준인지, 군 복무 연장(military=)이 있는지 공고문 확인",
-    "소득: 기준중위소득 %면 income_pct(household) 조건으로 바꾸기",
-    "지원 금액(amount_krw): 1인 총 수령액으로 계산해 넣기"
+    "'미소금융 청년 미래이음 대출'(서민금융진흥원, 별도 항목)과 같은 상품인지",
+    "취·창업 1년 이내의 기준",
+    "신용평점·근로장려금 요건 확인 방법 (kinfa.or.kr)"
   ],
   "policy": {
     "policy_id": "ontong-20260923005400113566",
@@ -12,13 +12,13 @@
     "agency": "금융위원회",
     "region": "전국",
     "amount_krw": null,
-    "amount_text": "➊ (지원대상) 사회 진입을 위한 자금이 필요한 미취업 또는 취업초기 청년*    * (개인신용평점 하위 20% 이하 또는 차상위계층 이하 또는 근로장려금 신청자격 대상자) & [34세 이하&취·창업 1년 이내]   ➋ (대출·상환조건) 금리 年 4.5% / 대출한도 최대 500만원 /거치 6년, 상환 5년 이내 원리금분할상환   ➌ (대출심사) 미취업 또는 취업초기 청년인 만큼 현재의 상환능력보다는 자금용도*·상환의지에 중점을 두어 심사     * 취업(자격증 취득 등)자금, 창업자금, (취업 후) 초기 정착자금 등",
+    "amount_text": "미소금융 청년상품. 대출한도 최대 500만 원, 금리 연 4.5%, 거치 6년·상환 5년 이내 원리금분할상환. 대출이라 수령액으로 환산하지 않음",
     "apply_start": null,
     "apply_end": null,
     "source_url": "https://www.kinfa.or.kr",
     "eligibility_text": "고졸자·미취업자 등 청년의 사회진입 준비자금을 지원하는 미소금융 청년상품",
     "exclusion_text": "",
-    "condition_dsl": "age(19..34)   # API sprtTrgtMinAge/MaxAge\nAND manual(\"소득: 명시적 소득요건은 없으나, 차상위계층 이하 등 저소득 청년 대상 지원\")   # API earnEtcCn",
+    "condition_dsl": "age(19..34)\nAND (employment in [\"미취업\", \"구직중\"] OR manual(\"취업·창업 1년 이내 취업초기 청년\"))\nAND (receiving(\"차상위계층\") OR receiving(\"기초생활수급(생계·의료급여)\")\n     OR manual(\"개인신용평점 하위 20% 이하 또는 근로장려금 신청자격 대상자\"))",
     "exclusive_with": []
   },
   "raw": {

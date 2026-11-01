@@ -2,22 +2,23 @@
   "status": "draft",
   "source": "온통청년 OpenAPI",
   "review": [
-    "연령 조건이 API에 없음: 공고문에서 확인",
-    "지원 금액(amount_krw): 1인 총 수령액으로 계산해 넣기"
+    "부산 지역 추가 혜택(동백패스 등)을 따로 넣을지",
+    "청년 연령에 군 복무 연장이 있는지",
+    "K-패스 카드 발급·회원가입 안내 (korea-pass.kr)"
   ],
   "policy": {
     "policy_id": "ontong-20260710005400113257",
-    "name": "K-패스(K패스)",
+    "name": "K-패스 (청년 30% 환급)",
     "agency": "국토교통부",
     "region": "전국",
     "amount_krw": null,
-    "amount_text": "○ 월 15회 이상 대중교통 이용 시 지출액의 일정비율 환급(1일 최대 2회, 월 최대 60회까지) - 일반층 : 20% - 청년층 : 30% , ㆍ 청년기본법에 따른 만19~34세 - 저소득층 : 53%, ㆍ 기초생활보장법에 따른 기초생활수급자 및 차상위계층 - 2자녀가구 : 30% - 3자녀 이상 가구 : 50%",
+    "amount_text": "월 15회 이상 대중교통 이용 시 지출액의 30% 환급(청년 19~34세). 1일 최대 2회, 월 최대 60회. 환급액은 이용액에 따라 달라 환산하지 않음",
     "apply_start": null,
     "apply_end": null,
     "source_url": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/161300000104",
     "eligibility_text": "○ 국민 교통비 절감 및 대중교통 이용 활성화를 위해 정기적 대중교통 이용시 교통비 지출액의 일정비율 환급\n○ 월15회 이상 K-패스 교통카드 사용 시 청년(19~34세) 대중교통비 30% 환급",
     "exclusion_text": "",
-    "condition_dsl": null,
+    "condition_dsl": "age(19..34)   # 청년기본법 만 19~34세. 35세 이상은 일반 20% 환급\nAND manual(\"월 15회 이상 K-패스 교통카드로 대중교통 이용\")",
     "exclusive_with": []
   },
   "raw": {

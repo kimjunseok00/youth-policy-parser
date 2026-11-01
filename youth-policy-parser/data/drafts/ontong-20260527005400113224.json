@@ -2,8 +2,9 @@
   "status": "draft",
   "source": "온통청년 OpenAPI",
   "review": [
-    "연령: 만 나이 기준인지, 군 복무 연장(military=)이 있는지 공고문 확인",
-    "지원 금액(amount_krw): 1인 총 수령액으로 계산해 넣기"
+    "내년(2027년) 기준 출생연도 — 해마다 달라짐",
+    "연 3회 한도와 예산 소진 여부 (q-net.or.kr)",
+    "응시료 50% 금액 예시를 넣을지"
   ],
   "policy": {
     "policy_id": "ontong-20260527005400113224",
@@ -11,13 +12,13 @@
     "agency": "고용노동부",
     "region": "전국",
     "amount_krw": null,
-    "amount_text": "34세 이하 청년*이(소득 및 취업 여부 무관) 한국산업인력공단이 시행하는 국가기술자격 시험(’26년 기준 491종목)에 응시하는 경우 응시료의 50%를 선 지원 (1인당 年 3회 지원, 단 예산 242억 원 소진시 마감)  * ’26년 기준 ’91.1.1. 이후 출생자",
+    "amount_text": "한국산업인력공단 국가기술자격 시험 응시료의 50% 지원, 1인당 연 3회. 예산 242억 원 소진 시 마감. Q-Net 원서접수 결제 때 자동 적용",
     "apply_start": null,
     "apply_end": null,
     "source_url": "https://www.q-net.or.kr/man004.do?id=man00402&gSite=Q&gId=",
     "eligibility_text": "구직활동을 하거나 경력을 개발하는 청년들의 경제적 부담을 완화하고, 국가기술자격 취득을 통한 취업 경쟁력 강화를 도모",
     "exclusion_text": "",
-    "condition_dsl": "age(..34)   # API sprtTrgtMinAge/MaxAge",
+    "condition_dsl": "born(1991-01-01..2026-12-31)   # 34세 이하 청년: '26년 기준 '91.1.1. 이후 출생 (소득·취업 여부 무관)",
     "exclusive_with": []
   },
   "raw": {
