@@ -2,11 +2,9 @@
   "status": "draft",
   "source": "온통청년 OpenAPI",
   "review": [
-    "연령: 만 나이 기준인지, 군 복무 연장(military=)이 있는지 공고문 확인",
-    "소득: 기준중위소득 %면 income_pct(household) 조건으로 바꾸기",
-    "추가 자격조건 원문을 조건식(취업상태·학력·거주기간 등)으로 나누기",
-    "참여 제한 대상(중복수혜 등)을 NOT receiving(...)으로 옮기기",
-    "지원 금액(amount_krw): 1인 총 수령액으로 계산해 넣기"
+    "소득 기준 150%+20%p의 적용 대상(1인 가구 본인)과 비율 170% 해석",
+    "모집 중인 단지·지역 (myhome.go.kr)",
+    "대학생 신청 시 별도 소득 기준 여부"
   ],
   "policy": {
     "policy_id": "ontong-20260922005400113533",
@@ -14,13 +12,13 @@
     "agency": "국토교통부",
     "region": "전국",
     "amount_krw": null,
-    "amount_text": "무주택자이면서, 미혼인 청년(대학생 포함)에게 교통이 우수한 입지를 중심으로 청년층이 선호하는 빌트인 가구 등이 적용된 주택과 특화시설이 복합된 공공임대주택 공급 추진",
+    "amount_text": "무주택 미혼 청년에게 빌트인 가구와 특화시설을 갖춘 공공임대주택(통합공공임대 기준) 공급. 현금 지급이 아니라 주택 공급이다",
     "apply_start": null,
     "apply_end": null,
     "source_url": "https://www.myhome.go.kr/hws/portal/main/getMgtMainPage.do",
     "eligibility_text": "무주택 미혼 청년들에게 공공임대주택 공급\n통합공공임대주택 자산/챠랑가액 기준 만족\n('26년 기준, 총자산가액 3.45억 이하 / 차량가액 4,542만원 이하)",
     "exclusion_text": "기혼 청년의 경우, 신청 불가",
-    "condition_dsl": "age(18..39)   # API sprtTrgtMinAge/MaxAge\nAND manual(\"미혼\")   # API mrgSttsCd\nAND manual(\"소득: 기준 중위소득 150% 이하(1인 기준 20%p 추가 가산)\")   # API earnEtcCn\nAND manual(\"추가 자격: 통합공공임대주택 자산/챠랑가액 기준 만족 ('26년 기준, 총자산가액 3.45억 이하 / 차량가액 4,542\")   # API addAplyQlfcCndCn",
+    "condition_dsl": "age(18..39)\nAND income_pct(personal) <= 170   # 기준 중위소득 150% 이하, 1인 기준 20%p 가산 → 170%\nAND manual(\"무주택 미혼 청년 (기혼은 신청 불가)\")\nAND manual(\"통합공공임대 자산 기준: 총자산가액 3.45억 원 이하, 차량가액 4,542만 원 이하 ('26년)\")",
     "exclusive_with": []
   },
   "raw": {

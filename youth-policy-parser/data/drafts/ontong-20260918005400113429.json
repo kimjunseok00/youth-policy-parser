@@ -2,8 +2,9 @@
   "status": "draft",
   "source": "온통청년 OpenAPI",
   "review": [
-    "연령: 만 나이 기준인지, 군 복무 연장(military=)이 있는지 공고문 확인",
-    "지원 금액(amount_krw): 1인 총 수령액으로 계산해 넣기"
+    "인턴 급여·기간 (2030db.go.kr 모집공고)",
+    "재학생·졸업예정자 참여 가능 여부",
+    "군 복무 연장 여부"
   ],
   "policy": {
     "policy_id": "ontong-20260918005400113429",
@@ -11,13 +12,13 @@
     "agency": "국무조정실",
     "region": "전국",
     "amount_krw": null,
-    "amount_text": "48개 중앙행정기관의 본부 및 소속기관에서의 일경험 기회를 제공하기 위해 매년 청년인턴 5천여명 채용 - 청년인턴 선발 및 관리는 각 부처청이 직접 담당",
+    "amount_text": "48개 중앙행정기관 본부·소속기관에서 일경험 기회 제공, 연 5천여 명 채용 (선발·관리는 각 부처). 급여 금액은 API에 없음",
     "apply_start": null,
     "apply_end": null,
     "source_url": "https://www.2030db.go.kr/user/youthIntern/selectYouthInternList.do",
     "eligibility_text": "48개 중앙행정기관에서의 일경험 기회를 제공하기 위해 청년인턴 채용",
     "exclusion_text": "",
-    "condition_dsl": "age(19..34)   # API sprtTrgtMinAge/MaxAge\nAND employment in [\"구직중\", \"미취업\"]   # API jobCd",
+    "condition_dsl": "age(19..34)\nAND employment in [\"미취업\", \"구직중\"]",
     "exclusive_with": []
   },
   "raw": {

@@ -2,9 +2,9 @@
   "status": "draft",
   "source": "온통청년 OpenAPI",
   "review": [
-    "연령: 만 나이 기준인지, 군 복무 연장(military=)이 있는지 공고문 확인",
-    "추가 자격조건 원문을 조건식(취업상태·학력·거주기간 등)으로 나누기",
-    "지원 금액(amount_krw): 1인 총 수령액으로 계산해 넣기"
+    "'비재학생'에 휴학생이 포함되는지 (nais.or.kr)",
+    "대학별 모집 일정과 지원 내용(수당 유무)",
+    "신청 기간 2026-07-07~2028-02-29 의 의미(사업 기간 추정)"
   ],
   "policy": {
     "policy_id": "ontong-20260714005400113259",
@@ -12,13 +12,13 @@
     "agency": "교육부",
     "region": "전국",
     "amount_krw": null,
-    "amount_text": "청년도약 인재양성 부트캠프는 대학의 우수한 교육 체계와 교내 기반 시설(인프라)을 활용하여 청년들에게 재도약 기회를 제공하는 프로그램이며,  <첨단인재형> 은 AI, 반도체, 이차전지, 항공우주 등 첨단분야 중심의 교육을,   <실전인재형> 은 인문,사회,예슬, 서비스 등의 분야에서 직무 중심의 AI전환 교육과정을 지원합니다.  * 자세한 사항은 한국산업기술진흥원(https://www.nais.or.kr) 참조",
+    "amount_text": "대학의 교육 체계와 기반 시설을 활용한 단기 집중교육(첨단인재형·실전인재형) 제공. 현금 지급이 아니라 교육 참여이며, 신청 기간은 대학별로 다름",
     "apply_start": "2026-07-07",
     "apply_end": "2028-02-29",
     "source_url": "https://www.nais.or.kr/",
     "eligibility_text": "청년(비재학생) 대상으로 대학-기업이 함께 수준별 단기 집중교육을 제공하여 역량 제고 및 사회참여 기회 제공\n첨단산업 분야 취·창업을 희망하는 청년(만19세 ~ 34세 이하 청년)",
     "exclusion_text": "",
-    "condition_dsl": "age(19..34)   # API sprtTrgtMinAge/MaxAge\nAND education in [\"대학졸업\"]   # API schoolCd\nAND manual(\"특화 대상: 기타 해당\")   # API sbizCd\nAND manual(\"추가 자격: 첨단산업 분야 취·창업을 희망하는 청년(만19세 ~ 34세 이하 청년)\")   # API addAplyQlfcCndCn",
+    "condition_dsl": "age(19..34)\nAND NOT education in [\"대학재학\", \"대학원\"]\nAND manual(\"비재학생 청년으로 첨단산업 분야 취·창업을 희망 (휴학생 포함 여부는 대학별 모집공고 확인)\")",
     "exclusive_with": []
   },
   "raw": {
