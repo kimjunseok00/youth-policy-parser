@@ -1,0 +1,15 @@
+{
+  "policy_id": "busanjin-exam-fee-2026",
+  "name": "부산진구 청년 자격시험 응시료 지원",
+  "agency": "부산진구",
+  "region": "부산광역시",
+  "amount_krw": 100000,
+  "amount_text": "어학·국가기술·국가전문자격·한국사 등 약 810종 시험 응시료 최대 10만 원",
+  "apply_start": "2026-03-01",
+  "apply_end": "2026-12-15",
+  "source_url": "https://www.busanjin.go.kr/upload_data/pdf/177200646557453.pdf",
+  "eligibility_text": "18~39세 미취업·미창업 청년, 부산진구에 최종 전입일 기준 1년 이상 연속 거주. 2025.12.1 이후 응시한 시험. 구청 홈페이지 온라인 접수 3.1~12.15",
+  "exclusion_text": "",
+  "condition_dsl": "age(18..39)\nAND region(\"부산광역시\", \"부산진구\")\nAND residence_months >= 12   # 최종 전입일 기준 1년 이상 연속 거주\nAND employment in [\"미취업\", \"구직중\"]\nAND manual(\"2025년 12월 1일 이후 대상 시험에 응시\")",
+  "exclusive_with": []
+}

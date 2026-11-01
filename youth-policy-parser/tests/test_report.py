@@ -29,7 +29,10 @@ def test_synthetic_population_is_reproducible_and_valid():
     b = synthetic_population(50, AS_OF, seed=1)
     assert a == b
     assert all(p.personal_income_monthly <= p.household_income_monthly for p in a)
-    assert all(19 <= (AS_OF - p.birth_date).days // 365 <= 40 for p in a)
+    assert all(19 <= (AS_OF - p.birth_date).days // 365 <= 46 for p in a)
+    assert any(
+        (AS_OF - p.birth_date).days // 365 >= 40 for p in a
+    )  # 연령 상한 완화를 시험할 40대 포함
 
 
 def test_aggregate_counts_add_up():
@@ -184,3 +187,16 @@ def test_reason_to_dot_structure():
     assert dot.count("->") == 2
     assert '\\"포함\\"' in dot  # 따옴표가 DOT 문법을 깨지 않게 이스케이프
     assert "청년 월세 지원" in dot
+
+
+def test_synthetic_population_follows_real_statistics():
+    """가상 인구가 실제 통계에 맞춘 비율(구·군 분포, 1인 가구, 고용률)을 따르는지 (오차 범위 넉넉히)."""
+    from engine.regions import BUSAN_SIGUNGU
+    from engine.report import SIGUNGU_W
+
+    assert {g for g, _ in SIGUNGU_W} == set(BUSAN_SIGUNGU)
+    people = synthetic_population(2000, AS_OF)
+    share = lambda f: sum(map(f, people)) / len(people)  # noqa: E731
+    assert 0.15 < share(lambda p: p.household_size == 1) < 0.24  # 실제 19.5%
+    assert 0.62 < share(lambda p: p.employment.value in ("재직", "자영업", "프리랜서")) < 0.73
+    assert share(lambda p: p.sigungu == "부산진구") > share(lambda p: p.sigungu == "중구") * 5

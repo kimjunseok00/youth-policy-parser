@@ -1,0 +1,15 @@
+{
+  "policy_id": "ontong-20260429005400212905",
+  "name": "부산 청년 맞춤형 민간임대주택 공급(희망더함주택)",
+  "agency": "부산광역시 주택건축국 주택정책과",
+  "region": "부산광역시",
+  "amount_krw": null,
+  "amount_text": "공공지원민간임대주택을 10년간 공급. 임대료는 주변 시세의 85% 이하(일반공급), 75% 이하(특별공급). 현금 지급이 아니라 주택 공급이다",
+  "apply_start": null,
+  "apply_end": null,
+  "source_url": "https://www.busan.go.kr/depart/dreamhouse",
+  "eligibility_text": "대중교통 이용이 편리한 지역에 규제 완화를 통해 양질의 저렴한 공공지원민간임대주택을 10년간 청년층에게 공급\n「민간임대주택에 관한 특별법 시행규칙」[별표1] 참조",
+  "exclusion_text": "「민간임대주택에 관한 특별법 시행규칙」[별표1] 참조",
+  "condition_dsl": "age(19..39)\nAND manual(\"무주택 청년 또는 신혼부부\")\nAND manual(\"※ 소득·자산 기준은 「민간임대주택에 관한 특별법 시행규칙」 별표1, 선정 방식은 업무처리지침 별표5 참조 (민간사업시행자에게 신청)\")",
+  "exclusive_with": []
+}

@@ -8,12 +8,16 @@ TAGLINE = "청년정책, 나도 되나요?"
 DESCRIPTION = (
     "부산 청년정책 자격요건을 조건식으로 판정해 되는 것과 안 되는 것을 이유까지 알려드립니다."
 )
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 
-# 배포 주소. Streamlit Cloud의 앱 설정에서 사용자 지정 주소로 바꿨다면 여기도 바꾼다.
+# 배포 주소
+# - APP_URL: 지자체용 웹(Streamlit). 리포트·시뮬레이터가 주 기능이고, PC에서 쓰는 판정 화면도 있다.
+# Streamlit Cloud의 앱 설정에서 사용자 지정 주소로 바꿨다면 여기도 바꾼다.
 APP_URL = "https://youth-policy-parser-kenjdcyvrqqgkjbfxtebmw.streamlit.app"
 REPO_URL = "https://github.com/kimjunseok00/youth-policy-parser"
 SITE_URL = "https://kimjunseok00.github.io/youth-policy-parser"
+
+MOBILE_APP_URL = f"{SITE_URL}/app/"  # 청년용 앱(PWA). Pages가 site/와 함께 배포한다
 
 PRIVACY_URL = f"{SITE_URL}/privacy.html"
 TERMS_URL = f"{SITE_URL}/terms.html"

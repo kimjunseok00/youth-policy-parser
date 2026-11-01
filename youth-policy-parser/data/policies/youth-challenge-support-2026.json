@@ -3,14 +3,14 @@
   "name": "청년도전지원사업",
   "agency": "고용노동부 · 부산광역시",
   "region": "전국",
-  "amount_krw": 2500000,
-  "amount_text": "참여수당 월 최대 50만 원 × 최대 5개월",
+  "amount_krw": 3000000,
+  "amount_text": "과정별: 단기(5주) 50만 원 / 중기(15주) 최대 220만 원 / 장기(25주) 참여수당 250만 원 + 이수 20만 원 + 구직활동 30만 원 = 300만 원",
   "apply_start": null,
   "apply_end": null,
-  "source_url": "https://policy.ambitstock.com/policies/youth-challenge-support/",
-  "eligibility_text": "만 18~34세 미취업 청년 (6개월 이상 고용보험 미가입, 중위소득 120% 이하). 학력 무관 (단, 현재 학교 재학 중이 아니어야 함). 군 복무 기간만큼 연령 상한 연장 (최대 6년)",
+  "source_url": "https://www.work24.go.kr/wk/g/b/1100/busiIntro.do",
+  "eligibility_text": "만 18~34세 구직단념청년 등. 최근 6개월간 취업 및 교육·직업훈련 참여 이력이 없고, 구직단념청년 문답표 21점 이상(30점 만점). 공식 안내에 소득 기준 없음. 지자체별 운영기관 모집",
   "exclusion_text": "국민취업지원제도 I유형 구직촉진수당 수급 중인 자 / 고용보험 가입 근로자 (아르바이트 포함) / 공무원·교사·군인 등 공공부문 재직자 / 현재 재학 중인 대학생 (휴학 포함 시 참여 가능 여부 지역별 상이). 국민취업지원제도 동시 수급 불가",
-  "condition_dsl": "age(18..34, military=72)   # 군 복무 기간만큼 상한 연장(최대 6년)\nAND employment in [\"미취업\", \"구직중\"]\nAND income_pct(household) <= 120\nAND manual(\"6개월 이상 고용보험 미가입\")\nAND NOT education in [\"대학재학\", \"대학원\"]\nAND NOT receiving(\"국민취업지원제도\")",
+  "condition_dsl": "age(18..34)\nAND employment in [\"미취업\", \"구직중\"]\nAND manual(\"최근 6개월간 취업·교육·직업훈련 참여 이력 없음\")\nAND manual(\"구직단념청년 문답표 21점 이상\")\nAND NOT receiving(\"국민취업지원제도\")   # 국민취업지원제도는 정부 일자리사업 참여 중 제외 (고용24)",
   "exclusive_with": [
     "national-employment-support-youth"
   ]

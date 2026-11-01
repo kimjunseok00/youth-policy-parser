@@ -197,6 +197,32 @@ def test_optimizer_prefers_two_small_over_one_big():
     assert {r.policy_id for r in plan.selected} == {"b", "c"}
 
 
+def _cbc_runs() -> bool:
+    """PuLP에 들어 있는 CBC 솔버가 이 컴퓨터에서 실행되는지 (Apple Silicon 맥은 Intel용이라 실패할 수 있음)."""
+    try:
+        import pulp
+
+        return pulp.PULP_CBC_CMD(msg=False).available() and _solve_pulp_smoke()
+    except Exception:
+        return False
+
+
+def _solve_pulp_smoke() -> bool:
+    import pulp
+
+    prob = pulp.LpProblem("smoke", pulp.LpMaximize)
+    x = pulp.LpVariable("x", cat="Binary")
+    prob += x
+    try:
+        prob.solve(pulp.PULP_CBC_CMD(msg=False))
+    except Exception:
+        return False
+    return True
+
+
+@pytest.mark.skipif(
+    not _cbc_runs(), reason="이 컴퓨터에서는 CBC 솔버가 실행되지 않음 (앱은 전수 탐색으로 대체)"
+)
 def test_pulp_and_brute_force_agree():
     pols = [policy(f"p{i}", "age(19..)", 100 * (i + 1)) for i in range(8)]
     pairs = {frozenset({"p0", "p1"}), frozenset({"p1", "p2"}), frozenset({"p5", "p7"})}

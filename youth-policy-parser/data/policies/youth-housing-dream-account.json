@@ -1,0 +1,15 @@
+{
+  "policy_id": "youth-housing-dream-account",
+  "name": "청년 주택드림 청약통장",
+  "agency": "국토교통부 (은행 판매)",
+  "region": "전국",
+  "amount_krw": null,
+  "amount_text": "최대 연 4.5% 금리, 월 2만~100만 원 납입. 이자소득 비과세(500만 원 한도)·소득공제, 연계 대출 최저 연 2.2%",
+  "apply_start": null,
+  "apply_end": null,
+  "source_url": "https://image.kebhana.com/cont/download/documents/manual/0100152000201_20260101_m.pdf",
+  "eligibility_text": "만 19~34세(병역 기간 최대 6년 제외), 무주택, 직전연도 총급여(또는 종합소득) 5,000만 원 이하, 1인 1계좌. 비과세는 무주택 세대주·총급여 3,600만 원 이하. 국토부가 소득 기준 7,000만 원 완화 예정(시행일 미확인)",
+  "exclusion_text": "",
+  "condition_dsl": "age(19..34, military=72)   # 병역 기간 최대 6년 제외\nAND income(personal) <= 4166666   # 총급여 연 5,000만 원 = 월 약 417만 원\nAND manual(\"무주택\")\nAND manual(\"직전연도 소득 신고 증빙 가능 (병역 복무자는 예외)\")",
+  "exclusive_with": []
+}

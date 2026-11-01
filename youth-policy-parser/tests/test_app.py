@@ -37,8 +37,8 @@ def run_persona(index: int) -> AppTest:
 
 def test_input_page_renders():
     at = start()
-    assert at.title[0].value == "되나요"
-    assert "2026-10-10" in at.caption[0].value
+    assert at.header[0].value == "자격 판정"
+    assert any("2026-10-10" in c.value for c in at.caption)
     assert len([b for b in at.button if b.key and b.key.startswith("sample_")]) == len(personas())
 
 
@@ -46,7 +46,7 @@ def test_input_page_renders():
 def test_every_persona_reaches_result_page(index):
     at = run_persona(index)
     assert at.session_state["page"] == "result"
-    assert "💰 최대 수령액" in [m.label for m in at.metric]
+    assert "최대 수령액" in [m.label for m in at.metric]
     tab_labels = [t.label for t in at.tabs]
     for name in ("정책별 결과", "이것만 바꾸면", "최적 조합", "일정"):
         assert name in tab_labels
@@ -55,7 +55,11 @@ def test_every_persona_reaches_result_page(index):
 def test_seoul_persona_shows_move_suggestion():
     seoul = next(i for i, p in enumerate(personas()) if p["profile"]["sido"] != "부산광역시")
     at = run_persona(seoul)
-    assert "부산광역시(으)로 전입" in " ".join(m.value for m in at.markdown)
+    # 어떤 제안이 나오는지는 그날 신청 가능한 정책에 따라 달라진다 (마감된 정책은 제안하지 않음).
+    # 여기서는 '이것만 바꾸면' 화면이 제안 또는 '없음' 안내 중 하나를 보여주는지만 본다.
+    assert any(s.value == "이것만 바꾸면" for s in at.subheader)
+    texts = " ".join(m.value for m in at.markdown) + " ".join(c.value for c in at.caption)
+    assert "(으)로 전입" in texts or "새로 받을 수 있는 정책은 없습니다" in texts
 
 
 def test_optimizer_toggle_runs():
@@ -105,6 +109,7 @@ def test_report_page_renders_with_synthetic_warning():
     at = _run_page("page_report")
     assert at.header[0].value == "지자체 리포트"
     assert any("가상 인구" in w.value for w in at.warning)
+    at.selectbox(key="sim_policy").set_value("청년잡 매칭 인턴").run()  # 연령 상한이 있는 정책
     at.slider(key="sim_age").set_value(5).run()
     assert not at.exception, at.exception
     assert any(m.label == "대상 가능 인원" for m in at.metric)
@@ -114,3 +119,15 @@ def test_about_page_lists_policy_sources():
     at = _run_page("page_about")
     text = " ".join(m.value for m in at.markdown)
     assert "출처" in text and "개인정보" in " ".join(s.value for s in at.subheader)
+
+
+def test_no_emoji_in_ui_source():
+    """디자인 원칙: 화면에는 이모티콘을 쓰지 않는다 (상태는 글자 배지로 표시)."""
+    import re
+    from pathlib import Path
+
+    emoji = re.compile("[\U0001f300-\U0001faff\u2600-\u27bf]")
+    root = Path(__file__).resolve().parents[1]
+    files = [root / "streamlit_app.py", *sorted((root / "app").glob("*.py"))]
+    found = {f.name: emoji.findall(f.read_text("utf-8")) for f in files}
+    assert not {k: v for k, v in found.items() if v}

@@ -7,10 +7,10 @@
   "amount_text": "구직촉진수당 월 60만 원 × 최대 6개월 (부양가족 1인당 월 10만 원, 최대 40만 원 추가)",
   "apply_start": null,
   "apply_end": null,
-  "source_url": "https://www.healin2me.com/2026/07/1-2026.html",
-  "eligibility_text": "선발형 청년특례: 만 15~34세 (군필자는 최대 37세), 중위소득 120% 이하, 취업경험 요구하지 않음",
-  "exclusion_text": "재학생은 원칙적으로 제외 (제적증명 가능한 중퇴자는 포함) / 구직급여(실업급여)를 받고 있거나 수급이 끝난 지 6개월이 지나지 않은 자 / 부정수급 확인 시 5년간 참여 제한",
-  "condition_dsl": "age(15..34, military=36)   # 군필자 최대 37세 → 최대 3년 연장\nAND income_pct(household) <= 120\nAND employment in [\"미취업\", \"구직중\"]\nAND NOT education in [\"대학재학\", \"대학원\"]   # 휴학생 처리는 원문 불명확\nAND NOT receiving(\"구직급여(실업급여)\")",
+  "source_url": "https://www.work24.go.kr/ua/z/z/1300/selectEmssRqutIntro.do",
+  "eligibility_text": "만 15~34세(병역 이행 기간만큼 최대 37세), 가구 기준중위소득 120% 이하·재산 5억 원 이하(60~120% 구간은 예산 범위 내 선발), 취업경험 무관. 재학생은 원칙적으로 불가하나 대학 최종학년 마지막 학기 재학·휴학생은 참여 가능",
+  "exclusion_text": "구직급여 수급 중이거나 종료 후 6개월 미경과 / 생계급여 수급자 / 정부 일자리사업 참여 중이거나 종료 후 6개월 이내 / 주 30시간 이상 근로자, 월 250만 원 이상 사업자",
+  "condition_dsl": "age(15..34, military=36)   # 병역 기간만큼 최대 37세\nAND income_pct(household) <= 120\nAND manual(\"가구 재산 합계 5억 원 이하\")\nAND employment in [\"미취업\", \"구직중\"]\nAND (NOT education in [\"대학재학\", \"대학원\"]\n     OR manual(\"대학 최종학년 마지막 학기 재학·휴학 중\"))\nAND NOT receiving(\"구직급여(실업급여)\")\nAND NOT receiving(\"기초생활수급(생계·의료급여)\")   # 생계급여 수급자 제외",
   "exclusive_with": [
     "youth-challenge-support-2026"
   ]

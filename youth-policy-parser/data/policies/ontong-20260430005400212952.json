@@ -1,0 +1,15 @@
+{
+  "policy_id": "ontong-20260430005400212952",
+  "name": "부산 지역인재 장학금 지원",
+  "agency": "부산광역시 청년산학국 지산학협력과",
+  "region": "부산광역시",
+  "amount_krw": 1500000,
+  "amount_text": "생활장학금 1인당 150만 원 정액 (2026년 하반기 230명 선발). 공식 안내에서 확인된 1회 지급액 기준",
+  "apply_start": null,
+  "apply_end": null,
+  "source_url": "https://young.busan.go.kr/index.nm?menuCd=164",
+  "eligibility_text": "지역 내 이전 공공기관 기부금을 활용한 부산 소재 대학의 IT·상경 분야 3, 4학년(전문대학 2학년) 재학생 장학금 지원",
+  "exclusion_text": "",
+  "condition_dsl": "education in [\"대학재학\"]   # 공고일 현재 정규학기 재학생 (휴학·대학원·사이버대 제외). 부산 거주 요건 없음\nAND manual(\"부산 소재 대학의 IT·상경 분야 학과 소속, 일반대(4년제) 5학기 이상 등록(3~4학년) 또는 전문대 3학기 이상\")\nAND manual(\"직전학기 12학점 이상 이수, 평점 3.5 이상(4.5 만점)\")\nAND manual(\"한국장학재단 학자금 지원구간 9구간 이하, 대한민국 국적\")",
+  "exclusive_with": []
+}

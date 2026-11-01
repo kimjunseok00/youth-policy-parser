@@ -1,0 +1,15 @@
+{
+  "policy_id": "ontong-20260923005400113566",
+  "name": "청년 미래이음 대출",
+  "agency": "금융위원회",
+  "region": "전국",
+  "amount_krw": null,
+  "amount_text": "미소금융 청년 미래이음 대출. 한도 최대 500만 원, 금리 연 4.5% 이내, 최대 11년(거치 6년 이내·상환 5년 이내) 원리금균등분할상환. 최종 대출 여부는 여신심사로 결정. 대출이라 수령액으로 환산하지 않음",
+  "apply_start": null,
+  "apply_end": null,
+  "source_url": "https://www.kinfa.or.kr/financialProduct/youngFutureLinkLoan.do",
+  "eligibility_text": "고졸자·미취업자 등 청년의 사회진입 준비자금을 지원하는 미소금융 청년상품",
+  "exclusion_text": "",
+  "condition_dsl": "age(19..34)\nAND (employment in [\"미취업\", \"구직중\"] OR manual(\"취업·창업 1년 이내 취업초기 청년\"))\nAND (receiving(\"차상위계층\") OR receiving(\"기초생활수급(생계·의료급여)\")\n     OR manual(\"개인신용평점 하위 20% 이하 또는 근로장려금 신청자격 대상자\"))",
+  "exclusive_with": []
+}

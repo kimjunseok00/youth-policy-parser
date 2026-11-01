@@ -4,12 +4,12 @@
   "agency": "금융위원회",
   "region": "전국",
   "amount_krw": 1080000,
-  "amount_text": "월 최대 50만 원 납입 시 정부기여금 납입액의 6% × 36개월 (우대형 12%)",
-  "apply_start": "2026-06-22",
-  "apply_end": "2026-07-03",
-  "source_url": "https://v.daum.net/v/20260622001744644",
-  "eligibility_text": "만 19~34세 (군 복무 기간만큼 연장, 최대 만 40세). 개인 연소득 6,000만 원 이하 또는 연 매출 3억 원 이하 소상공인. 가구소득 중위소득 200% 이하",
+  "amount_text": "월 최대 50만 원 납입 시 정부기여금 납입액의 6% × 36개월 = 최대 108만 원 (우대형 12%, 최대 216만 원), 이자 비과세",
+  "apply_start": "2026-10-07",
+  "apply_end": "2026-10-16",
+  "source_url": "https://www.fnnews.com/news/202609301320003383",
+  "eligibility_text": "만 19~34세(병역 기간 최대 6년 제외). 2차: 총급여 7,500만 원 이하 또는 종합소득 6,300만 원 이하(2025년 소득 기준), 또는 연매출 3억 원 이하 소상공인. 가구 기준중위소득 200% 이하. 2차 신청 2026-10-07 ~ 10-16(평일), 계좌 개설 11-16 ~ 11-27",
   "exclusion_text": "청년도약계좌 가입자는 원칙적으로 중복 가입 불가 (이번 신청기간 한시 갈아타기 허용) / 도약계좌를 만기까지 유지한 사람",
-  "condition_dsl": "age(19..34, military=72)   # 군 복무 기간만큼 연장, 최대 만 40세\nAND income(personal) <= 5000000   # 연 6,000만 원 = 월 500만 원\nAND income_pct(household) <= 200\nAND NOT receiving(\"청년도약계좌\")",
+  "condition_dsl": "age(19..34, military=72)   # 병역 기간 최대 6년 제외\nAND income(personal) <= 6250000   # 2차: 총급여 연 7,500만 원 = 월 625만 원\nAND income_pct(household) <= 200\nAND NOT receiving(\"청년도약계좌\")   # 동시 보유 불가 (특별중도해지 후 갈아타기 가능)",
   "exclusive_with": []
 }

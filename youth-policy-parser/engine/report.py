@@ -24,7 +24,6 @@ from engine.evaluator import OR_LABEL, evaluate
 from engine.income import MedianIncomeTable, load_table
 from engine.nodes import Age, And, IncomePct, Node, Not, Or, iter_predicates
 from engine.parser import parse
-from engine.regions import BUSAN_SIGUNGU
 from engine.schemas import EvaluationResult, Policy, Profile, ReasonNode, Verdict
 
 PASS, FAIL, UNKNOWN = Verdict.PASS, Verdict.FAIL, Verdict.UNKNOWN
@@ -32,26 +31,45 @@ PASS, FAIL, UNKNOWN = Verdict.PASS, Verdict.FAIL, Verdict.UNKNOWN
 # ---------------------------------------------------------------------------
 # 가상 인구 가정 (시연용. 실측 통계가 아니다)
 # ---------------------------------------------------------------------------
+# 실제 통계로 맞춘 값과 가정을 구분해 적는다. 화면의 '가상 인구를 만든 가정'에 그대로 나온다.
 SYNTHETIC_ASSUMPTIONS = {
-    "지역": "부산광역시 16개 구·군 균등",
-    "나이": "만 19~39세 균등",
-    "취업상태": "재직 50% · 구직중 20% · 미취업 15% · 프리랜서 10% · 자영업 5%",
-    "학력": "대학졸업 45% · 고졸 20% · 대학재학 20% · 대학휴학·졸업예정·대학원 각 5%",
-    "가구원 수": "1인 35% · 2인 25% · 3인 25% · 4인 15%",
-    "가구소득": "기준중위소득의 30~200% 사이 (100% 근처가 가장 많음)",
-    "군 복무": "40%가 18~21개월",
+    "지역": "구·군별 20~39세 주민등록인구 비율 (2026.09, 행안부 자료 재집계: k-calc.com)",
+    "나이": "19~29세 41% · 30~39세 49% (2026.09 20대·30대 인구 비율) + 40~45세 10% (가정: 연령 상한 완화 시험용)",
+    "취업상태": "취업 67.3% · 구직중 3.5% · 미취업(비경활) 29.2% (19~39세 고용률 67.3%·실업률 5.0%, 2024, 동남지방데이터청). "
+    "취업자 안에서 재직 85% · 자영업 8% · 프리랜서 7%는 가정",
+    "학력": "24세 이하 미취업자는 대학재학·휴학 위주, 그 밖은 대학졸업 55% · 고졸 25% 등 (가정)",
+    "가구원 수": "1인 가구 19.5% (2022 부산청년패널, 18~34세) · 나머지 2~4인은 가정",
+    "본인 소득": "취업자 월 120만~480만 원, 평균 약 277만 원 (2022 부산청년패널 취업자 월평균 277.2만 원) · "
+    "미취업자 40%만 아르바이트 소득 (가정)",
+    "가구 소득": "본인 소득 + 다른 가구원 소득(기준중위소득의 20~180%, 가정)",
+    "군 복무": "40%가 18~21개월 (가정)",
 }
 
-EMPLOYMENT_W = [("재직", 50), ("구직중", 20), ("미취업", 15), ("프리랜서", 10), ("자영업", 5)]
-EDUCATION_W = [
-    ("대학졸업", 45),
-    ("고졸", 20),
-    ("대학재학", 20),
-    ("대학휴학", 5),
-    ("졸업예정", 5),
-    ("대학원", 5),
+# 구·군별 20~39세 인구 (2026.09). 구·군 비율로만 쓴다.
+SIGUNGU_W = [
+    ("부산진구", 99668), ("해운대구", 75225), ("남구", 58937), ("사하구", 57200),
+    ("동래구", 56316), ("북구", 54576), ("연제구", 49517), ("금정구", 45870),
+    ("사상구", 42739), ("수영구", 42218), ("강서구", 35103), ("기장군", 34632),
+    ("서구", 20393), ("동구", 18270), ("영도구", 17065), ("중구", 7848),
+]  # fmt: skip
+AGE_BAND_W = [((19, 29), 41), ((30, 39), 49), ((40, 45), 10)]
+EMPLOYMENT_W = [
+    ("재직", 57.2),
+    ("자영업", 5.4),
+    ("프리랜서", 4.7),
+    ("구직중", 3.5),
+    ("미취업", 29.2),
 ]
-HOUSEHOLD_W = [(1, 35), (2, 25), (3, 25), (4, 15)]
+EDUCATION_YOUNG_W = [("대학재학", 70), ("대학휴학", 10), ("고졸", 20)]
+EDUCATION_W = [
+    ("대학졸업", 55),
+    ("고졸", 25),
+    ("대학재학", 7),
+    ("대학원", 6),
+    ("졸업예정", 4),
+    ("대학휴학", 3),
+]
+HOUSEHOLD_W = [(1, 19.5), (2, 20), (3, 30), (4, 30.5)]
 
 
 def _pick(rng: random.Random, weighted: Sequence[tuple]) -> object:
@@ -71,27 +89,29 @@ def synthetic_population(
     rng = random.Random(seed)
     people = []
     for _ in range(n):
-        age_days = rng.randint(19 * 365 + 5, 39 * 365 + 360)
+        lo, hi = _pick(rng, AGE_BAND_W)
+        age_days = rng.randint(lo * 365 + 5, hi * 365 + 360)
         birth = date.fromordinal(as_of.toordinal() - age_days)
+        age = age_days // 365
         employment = _pick(rng, EMPLOYMENT_W)
+        not_working = employment in ("미취업", "구직중")
+        education = _pick(rng, EDUCATION_YOUNG_W if age <= 24 and not_working else EDUCATION_W)
         size = _pick(rng, HOUSEHOLD_W)
-        pct = min(max(rng.triangular(30, 200, 100), 30), 200)
-        household = int(table.monthly(size) * pct / 100)
-        if employment in ("미취업", "구직중"):
-            personal = 0
-        else:
-            personal = min(household, int(rng.uniform(1_500_000, 4_000_000)))
-        if size == 1:
-            household = max(household, personal)
+        if not_working:
+            personal = int(rng.uniform(500_000, 1_600_000)) if rng.random() < 0.4 else 0
+        else:  # 평균 약 277만 원이 되는 삼각분포
+            personal = int(rng.triangular(1_200_000, 4_800_000, 2_300_000))
+        others = 0 if size == 1 else int(table.monthly(size) * rng.triangular(20, 180, 80) / 100)
+        household = personal + others
         months_here = rng.randint(1, 120)
         residence = max(birth, date.fromordinal(as_of.toordinal() - months_here * 30))
         people.append(
             Profile(
                 birth_date=birth,
                 sido="부산광역시",
-                sigungu=rng.choice(BUSAN_SIGUNGU),
+                sigungu=_pick(rng, SIGUNGU_W),
                 residence_since=residence,
-                education=_pick(rng, EDUCATION_W),
+                education=education,
                 employment=employment,
                 personal_income_monthly=personal,
                 household_size=size,

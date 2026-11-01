@@ -1,0 +1,15 @@
+{
+  "policy_id": "ontong-20260513005400213194",
+  "name": "부산 청년문화육성 지원",
+  "agency": "부산광역시 청년산학국 청년정책과",
+  "region": "부산광역시",
+  "amount_krw": null,
+  "amount_text": "청년신진예술가 창작활동 지원금, 청년연출가 작품 제작지원 등 10개 사업. 사업별 지원 금액은 부산문화재단 공모 공고에 따름",
+  "apply_start": null,
+  "apply_end": null,
+  "source_url": "https://young.busan.go.kr/index.nm?menuCd=235",
+  "eligibility_text": "부산지역 청년 및 청년예술인을 위한 청년문화육성 지원",
+  "exclusion_text": "",
+  "condition_dsl": "age(18..39)   # 소득 기준 없음\nAND (region(\"부산광역시\") OR manual(\"부산에서 활동하는 청년예술가\"))\nAND manual(\"사업별 공모 선정 필요 (부산문화재단 공모: 청년예술가 창작활동, 청년연출가 작품제작 등, 매년 2~3월 선발)\")",
+  "exclusive_with": []
+}
