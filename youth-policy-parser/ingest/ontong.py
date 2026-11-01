@@ -302,9 +302,46 @@ def draft(item: dict) -> dict:
             "policy": policy, "raw": item}  # fmt: skip
 
 
+# 시·도 지자체 이름의 앞부분. 등록·주관 기관이 이렇게 시작하면 그 지역 주민 대상 정책이다.
+# (부산은 제외. 중앙부처·정부 산하기관 이름은 이 글자로 시작하지 않는다.)
+OTHER_SIDO_PREFIX = (
+    "서울", "경기", "인천", "대구", "광주", "대전", "울산", "세종", "강원", "충청", "충북",
+    "충남", "전라", "전북", "전남", "경상", "경북", "경남", "제주",
+)  # fmt: skip
+
+
+def is_other_region_gov(item: dict) -> bool:
+    """zipCd는 '전국'(전 지역 코드)으로 등록됐지만 부산 밖 지자체가 낸 정책인가.
+
+    실제 응답에서 경상북도 의성군·충청북도 등 지자체 정책이 전국 코드로 등록된 사례가 많다.
+    zipCd만 보면 부산 청년에게 맞지 않는 정책이 '전국'으로 섞여 들어오므로 기관명으로 거른다.
+    """
+    for key in ("rgtrHghrkInstCdNm", "rgtrUpInstCdNm", "sprvsnInstCdNm"):
+        if str(item.get(key) or "").strip().startswith(OTHER_SIDO_PREFIX):
+            return True
+    return False
+
+
+def is_open(item: dict, today: date | None = None) -> bool:
+    """지금 신청할 수 있거나 곧 열리는 정책인가. 마감(코드 0057003)·마감일이 지난 것은 아니다.
+
+    aplyYmd를 읽을 수 없는 기간제 정책은 True로 둔다(버리지 말고 사람이 확인하게).
+    """
+    today = today or date.today()
+    code = str(item.get("aplyPrdSeCd") or "")
+    if code == "0057003":
+        return False
+    if code == "0057002":
+        return True
+    _, end = parse_period(item.get("aplyYmd"))
+    return end is None or end >= today
+
+
 def wanted(item: dict, scope: str) -> bool:
-    """수집 범위: 'busan' = 부산 + 전국 정책, 'all' = 전부."""
+    """수집 범위: 'busan' = 부산 + 전국(중앙부처) 정책, 'all' = 전부."""
     if scope == "all":
         return True
     region, _ = classify_region(zip_codes(item.get("zipCd")))
+    if region == "전국" and is_other_region_gov(item):
+        return False
     return region in ("부산광역시", "전국")

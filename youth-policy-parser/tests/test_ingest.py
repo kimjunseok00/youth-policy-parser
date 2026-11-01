@@ -15,6 +15,8 @@ from ingest.ontong import (
     draft,
     find_items,
     find_total,
+    is_open,
+    is_other_region_gov,
     parse_period,
     wanted,
     zip_codes,
@@ -106,3 +108,28 @@ def test_code_tables_become_conditions():
     assert "미혼" not in dsl and "기혼" not in dsl
     assert d["policy"]["apply_start"] is None and d["policy"]["apply_end"] is None
     assert any("단위" in r for r in d["review"])
+
+
+def test_other_region_government_is_not_nationwide():
+    """전국 코드로 등록돼도 부산 밖 지자체 정책은 거르고, 중앙부처·산하기관은 남긴다."""
+    gov = {**ITEM, "zipCd": NATION}
+    assert wanted({**gov, "rgtrHghrkInstCdNm": "국토교통부"}, "busan")
+    assert wanted(
+        {**gov, "rgtrHghrkInstCdNm": "정부산하기관및위원회"}, "busan"
+    )  # '부산' 글자 포함 주의
+    for name in ("경상북도", "충청북도", "전남광주통합특별시", "서울특별시"):
+        assert is_other_region_gov({**gov, "rgtrHghrkInstCdNm": name})
+        assert not wanted({**gov, "rgtrHghrkInstCdNm": name}, "busan")
+    assert is_other_region_gov({**gov, "sprvsnInstCdNm": "경상북도 의성군 관광복지국"})
+    assert not is_other_region_gov({**gov, "sprvsnInstCdNm": "부산광역시 청년산학국"})
+    assert wanted({**gov, "rgtrHghrkInstCdNm": "경상북도"}, "all")
+
+
+def test_is_open():
+    today = date(2026, 11, 2)
+    assert is_open({"aplyPrdSeCd": "0057002"}, today)  # 상시
+    assert not is_open({"aplyPrdSeCd": "0057003"}, today)  # 마감
+    assert is_open({"aplyPrdSeCd": "0057001", "aplyYmd": "20260801 ~ 20261231"}, today)
+    assert not is_open({"aplyPrdSeCd": "0057001", "aplyYmd": "20260301 ~ 20260331"}, today)
+    assert is_open({"aplyPrdSeCd": "0057001", "aplyYmd": "20261201 ~ 20261215"}, today)  # 예정
+    assert is_open({"aplyPrdSeCd": "0057001", "aplyYmd": ""}, today)  # 읽을 수 없으면 사람이 확인
