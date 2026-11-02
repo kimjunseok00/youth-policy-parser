@@ -6,9 +6,13 @@
 // - 아이폰(사파리): 웹앱은 버튼으로 설치할 수 없어서 '공유 → 홈 화면에 추가' 순서를 안내
 // - 이미 설치해서 연 경우, 컴퓨터에서 연 경우: 아무것도 보이지 않는다.
 // '닫기'를 누르면 7일 동안 다시 보이지 않는다.
+// 닫은 뒤에도 '내 정보' 화면 아래 '앱 설치 방법' 버튼(showInstallGuide)으로 언제든 다시 열 수 있다.
 
 const DISMISS_KEY = "doenayo.install.dismissed";
 const QUIET_MS = 7 * 24 * 60 * 60 * 1000;
+
+// 안드로이드 크롬이 '설치 가능'이라고 알려 준 이벤트. 다시 보기 버튼에서도 쓰려고 기억해 둔다.
+let deferredPrompt = null;
 
 function isStandalone() {
   return window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
@@ -69,6 +73,31 @@ function showIOS(box) {
   box.hidden = false;
 }
 
+function showGeneric(box) {
+  box.replaceChildren(
+    el("p", "install-title", "홈 화면에 추가하는 방법"),
+    el("p", "install-desc", "브라우저마다 메뉴 이름이 조금씩 다릅니다."),
+  );
+  const steps = el("ol", "install-steps");
+  for (const s of [
+    "아이폰: 사파리 공유 버튼(네모에 화살표) → '홈 화면에 추가' → '추가'",
+    "안드로이드: 크롬 오른쪽 위 메뉴(점 3개) → '홈 화면에 추가' 또는 '앱 설치'",
+  ]) {
+    steps.append(el("li", "", s));
+  }
+  box.append(steps, closeButton(box));
+  box.hidden = false;
+}
+
+function showInstalled(box) {
+  box.replaceChildren(
+    el("p", "install-title", "이미 앱으로 실행 중입니다"),
+    el("p", "install-desc", "홈 화면의 '되나요' 아이콘으로 열려 있어서 따로 설치할 필요가 없습니다."),
+  );
+  box.append(closeButton(box));
+  box.hidden = false;
+}
+
 function showPrompt(box, deferred) {
   box.replaceChildren(
     el("p", "install-title", "앱으로 설치해서 쓰세요"),
@@ -79,6 +108,7 @@ function showPrompt(box, deferred) {
   go.addEventListener("click", async () => {
     deferred.prompt();
     await deferred.userChoice.catch(() => {});
+    deferredPrompt = null; // 한 번 쓴 설치 이벤트는 다시 쓸 수 없다
     box.hidden = true;
   });
   box.append(go, closeButton(box));
@@ -87,14 +117,28 @@ function showPrompt(box, deferred) {
 
 export function initInstall() {
   const box = document.querySelector("#install");
-  if (!box || isStandalone() || recentlyDismissed()) return;
+  if (!box) return;
 
+  // 설치 이벤트는 '닫기'를 눌렀어도 기억해 둔다 (다시 보기 버튼에서 바로 설치할 수 있게)
   window.addEventListener("beforeinstallprompt", (e) => {
     e.preventDefault(); // 브라우저 기본 안내 대신 우리 화면에서 보여 준다
-    showPrompt(box, e);
+    deferredPrompt = e;
+    if (!isStandalone() && !recentlyDismissed()) showPrompt(box, e);
   });
   window.addEventListener("appinstalled", () => {
+    deferredPrompt = null;
     box.hidden = true;
   });
-  if (isIOS()) showIOS(box);
+  if (isIOS() && !isStandalone() && !recentlyDismissed()) showIOS(box);
+}
+
+// '앱 설치 방법' 버튼: 7일 숨김과 상관없이 지금 환경에 맞는 안내를 다시 보여 준다.
+export function showInstallGuide() {
+  const box = document.querySelector("#install");
+  if (!box) return;
+  if (isStandalone()) showInstalled(box);
+  else if (deferredPrompt) showPrompt(box, deferredPrompt);
+  else if (isIOS()) showIOS(box);
+  else showGeneric(box);
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }

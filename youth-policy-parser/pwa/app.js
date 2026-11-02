@@ -7,7 +7,7 @@
 // - 이모티콘을 쓰지 않는다. 판정은 글자 배지(충족·불충족·확인 필요·참고)로 표시한다.
 // - 화면에 넣는 모든 글자는 esc()를 거친다 (정책 데이터에 HTML이 섞여도 실행되지 않게).
 
-import { initInstall } from "./install.js";
+import { initInstall, showInstallGuide } from "./install.js";
 
 const STORE_KEY = "doenayo.v1";
 const BUSAN = "부산광역시";
@@ -18,6 +18,7 @@ const VERDICT = {
 };
 const FIX_TAG = { 행동: ["바꿀 수 있음", "blue"], 시간: ["시간이 지나면", "note"], "변경 어려움": ["변경 어려움", "note"] };
 const EVENT_TAG = { "자격 발생": "pass", "자격 상실": "fail", "신청 마감": "unknown" };
+const QUESTIONS_FIRST = 3; // 결과 화면에 먼저 보여 줄 확인 질문 수 (나머지는 접어 둔다)
 
 const state = {
   meta: null, // 선택지·예시 인물·기준중위소득 (엔진이 준다)
@@ -28,6 +29,7 @@ const state = {
   withUnknown: false,
   persona: null,
   busy: false,
+  moreQuestions: false, // '질문 더 보기'를 펼쳤는지 (다시 그려도 유지)
 };
 const asOfParam = new URLSearchParams(location.search).get("as_of"); // 시연용: ?as_of=2026-10-12
 
@@ -86,6 +88,25 @@ function tag(text, cls = "note") {
 function period(p) {
   if (!p.apply_start && !p.apply_end) return "상시 · 공고 확인";
   return `${p.apply_start ?? ""} ~ ${p.apply_end ?? ""}`;
+}
+// 출처가 공공기관 사이트인지 (도메인으로만 판단). 기사·블로그 같은 2차 출처는 '신청'이라고 부르지 않는다.
+function isOfficial(url) {
+  try {
+    const host = new URL(url).hostname;
+    return /\.(go|or)\.kr$/.test(host);
+  } catch {
+    return false;
+  }
+}
+// 합계(최적 조합)에 들어가지 못한 정책을 이유별로 센다.
+// 기준은 엔진 optimizer와 같다: 신청 기간 안 + 금액이 정해진 정책만 합계에 들어간다.
+function leftOut(results, withUnknown) {
+  const ok = withUnknown ? ["충족", "확인필요"] : ["충족"];
+  const rs = results.filter((r) => ok.includes(r.verdict));
+  return {
+    closed: rs.filter((r) => !r.is_open).length,
+    noAmount: rs.filter((r) => r.is_open && !r.amount_krw).length,
+  };
 }
 function leaves(node) {
   return node.children?.length ? node.children.flatMap(leaves) : [node];
@@ -242,6 +263,7 @@ function renderProfile() {
 
       <div id="formError"></div>
       <p class="foot">입력한 정보는 이 기기 안에서만 계산하고 어디에도 보내지 않습니다.<br>
+        <button type="button" class="linkish" data-install>앱 설치 방법</button> ·
         <a href="../">서비스 소개</a> · <a href="../privacy.html">개인정보처리방침</a> · <a href="../terms.html">이용약관</a></p>
     </form>
     <div class="cta-bar"><button class="btn" type="submit" form="profileForm" id="judgeBtn">판정하기</button></div>
@@ -281,6 +303,7 @@ profileView.addEventListener("input", (e) => {
   save();
 });
 profileView.addEventListener("click", (e) => {
+  if (e.target.closest("[data-install]")) return showInstallGuide();
   const chip = e.target.closest("[data-persona]");
   if (chip) {
     const i = Number(chip.dataset.persona);
@@ -373,18 +396,45 @@ function policyCard(p) {
     </button>`;
 }
 
+// 확인 질문 정렬: 걸린 정책 중 가장 큰 금액 → 걸린 정책 수 순서.
+// data-q에는 엔진이 준 원래 순번을 넣는다 (답을 저장할 때 원래 질문을 찾기 위해).
+function orderedQuestions(qs, results) {
+  const amount = new Map(results.map((r) => [r.policy_name, r.amount_krw ?? 0]));
+  const top = (q) => Math.max(0, ...q.policies.map((n) => amount.get(n) ?? 0));
+  return qs
+    .map((q, i) => ({ ...q, i }))
+    .sort((a, b) => top(b) - top(a) || b.policies.length - a.policies.length);
+}
+function questionRow(q) {
+  return `<div class="question">
+    <p>${esc(q.text)}</p>
+    <div class="seg" role="group" aria-label="답">
+      <button type="button" data-q="${q.i}" data-a="yes">예</button>
+      <button type="button" data-q="${q.i}" data-a="no">아니오</button>
+      <button type="button" data-q="${q.i}" data-a="skip" aria-pressed="true">모름</button>
+    </div>
+    <span class="small muted">관련 정책: ${q.policies.map(esc).join(", ")}</span>
+  </div>`;
+}
+
 function renderResult() {
   const { data } = state;
   const results = data.result.results;
   const count = (v) => results.filter((r) => r.verdict === v).length;
   const plan = state.withUnknown ? data.plan_with_unknown : data.plan;
   const shown = state.filter === "all" ? results : results.filter((r) => r.verdict === state.filter);
+  const passCount = count("충족");
+  const out = leftOut(results, state.withUnknown);
+  const outText = [out.noAmount && `금액 미정 ${out.noAmount}건`, out.closed && `신청 기간 아님 ${out.closed}건`].filter(Boolean).join(" · ");
+  // 충족 정책은 있는데 합계가 0원인 경우: '0원'만 크게 보이면 아무것도 못 받는 것처럼 읽힌다.
+  // 그럴 때는 금액 대신 충족 건수를 크게 보여 주고, 합계에 못 넣은 이유를 적는다.
+  const noSum = !plan.selected.length && !state.withUnknown && passCount > 0;
   const qs = data.questions;
 
   $('[data-view="result"]').innerHTML = `
     <div class="card summary accent">
-      <div class="label">${state.withUnknown ? "확인 필요까지 포함하면 최대" : "지금 함께 받을 수 있는 최대"}</div>
-      <div class="amount">${man(plan.total_krw)}</div>
+      <div class="label">${noSum ? "조건을 모두 충족한 정책" : state.withUnknown ? "확인 필요까지 포함하면 최대" : "지금 함께 받을 수 있는 최대"}</div>
+      <div class="amount">${noSum ? `${passCount}건` : man(plan.total_krw)}</div>
       <div class="seg" role="group" aria-label="계산 범위">
         <button type="button" data-plan="0" aria-pressed="${!state.withUnknown}">충족 정책만</button>
         <button type="button" data-plan="1" aria-pressed="${state.withUnknown}">확인 필요 포함</button>
@@ -395,8 +445,15 @@ function renderResult() {
               ${plan.selected.map((r) => `<li><span>${badge(r.verdict)} ${esc(r.policy_name)}</span><b>${man(r.amount_krw)}</b></li>`).join("")}
               ${plan.excluded.map((x) => `<li><span class="out">제외: ${esc(x.policy_name)} — ${esc(x.because_of)}와 같이 받을 수 없음</span></li>`).join("")}
             </ul>`
-          : `<p class="small muted" style="margin:12px 0 0">지금 신청할 수 있는 정책이 없습니다. '확인 필요 포함'을 눌러 보세요.</p>`
+          : `<p class="small muted" style="margin:12px 0 0">${
+              noSum
+                ? `${esc(outText)}이라 합계 금액은 계산하지 않았습니다. 아래 목록에서 확인하세요.`
+                : state.withUnknown
+                  ? "확인 필요 정책 중에도 지금 금액을 계산할 수 있는 정책이 없습니다."
+                  : "아직 조건을 모두 충족한 정책이 없습니다. '확인 필요 포함'을 눌러 보세요."
+            }</p>`
       }
+      ${plan.selected.length && outText ? `<p class="small muted" style="margin:10px 0 0">합계에 넣지 않은 정책: ${esc(outText)}</p>` : ""}
       <div class="counts" style="margin-top:14px">
         <div class="c-pass"><b>${count("충족")}</b><span>충족</span></div>
         <div class="c-unknown"><b>${count("확인필요")}</b><span>확인 필요</span></div>
@@ -408,20 +465,16 @@ function renderResult() {
       qs.length || Object.keys(state.answers).length
         ? `<div class="card">
             <h2>확인 질문 ${qs.length}개</h2>
-            <p class="small muted" style="margin:-6px 0 12px">답하면 '확인 필요'가 충족 또는 불충족으로 바로 바뀝니다.</p>
-            ${qs
-              .map(
-                (q, i) => `<div class="question">
-                  <p>${esc(q.text)}</p>
-                  <div class="seg" role="group" aria-label="답">
-                    <button type="button" data-q="${i}" data-a="yes">예</button>
-                    <button type="button" data-q="${i}" data-a="no">아니오</button>
-                    <button type="button" data-q="${i}" data-a="skip" aria-pressed="true">모름</button>
-                  </div>
-                  <span class="small muted">관련 정책: ${q.policies.map(esc).join(", ")}</span>
-                </div>`,
-              )
-              .join("")}
+            <p class="small muted" style="margin:-6px 0 12px">답하면 '확인 필요'가 충족 또는 불충족으로 바로 바뀝니다. 금액이 큰 정책에 걸린 질문부터 보여 드립니다.</p>
+            ${orderedQuestions(qs, results).slice(0, QUESTIONS_FIRST).map(questionRow).join("")}
+            ${
+              qs.length > QUESTIONS_FIRST
+                ? `<details class="more-q" ${state.moreQuestions ? "open" : ""}>
+                    <summary>나머지 질문 ${qs.length - QUESTIONS_FIRST}개 더 보기</summary>
+                    ${orderedQuestions(qs, results).slice(QUESTIONS_FIRST).map(questionRow).join("")}
+                  </details>`
+                : ""
+            }
             ${
               Object.keys(state.answers).length
                 ? `<p class="small muted" style="margin:10px 0 0">이미 답한 질문 ${Object.keys(state.answers).length}개가 반영되어 있습니다.
@@ -446,6 +499,14 @@ function renderResult() {
     <p class="foot">판정 기준일 ${esc(data.as_of)} · 결과는 참고용이며, 최종 자격은 공고문과 담당 기관에서 확인하세요.</p>
   `;
 }
+
+$('[data-view="result"]').addEventListener(
+  "toggle",
+  (e) => {
+    if (e.target.matches?.("details.more-q")) state.moreQuestions = e.target.open;
+  },
+  true, // toggle 이벤트는 위로 전파되지 않아서 캡처 단계에서 받는다
+);
 
 $('[data-view="result"]').addEventListener("click", (e) => {
   const t = e.target.closest("button");
@@ -484,6 +545,22 @@ function reasonTree(node, depth = 0) {
   return `<li>${b}<span>${esc(node.label)}${node.detail ? `<span class="d">${esc(node.detail)}</span>` : ""}</span></li>`;
 }
 
+// 상세 맨 아래 버튼. 공공기관 사이트면 '신청 안내 보기'(진한 버튼), 기사 등 2차 출처면 그렇다고 밝힌다.
+function sourceLink(p) {
+  if (!p.source_url) return "";
+  const official = isOfficial(p.source_url);
+  const label = official ? "공식 사이트에서 신청 안내 보기" : "관련 기사 보기 (2차 출처)";
+  const note = !p.is_open
+    ? "지금은 신청 기간이 아닙니다. 다음 공고 일정을 확인하세요."
+    : official
+      ? "신청은 담당 기관 사이트에서 합니다."
+      : "신청 전 담당 기관의 공고문을 꼭 확인하세요.";
+  return `<div class="apply">
+    <a class="btn ${official ? "" : "ghost"}" href="${esc(p.source_url)}" target="_blank" rel="noopener">${label}</a>
+    <p class="small muted">${note}</p>
+  </div>`;
+}
+
 function openPolicy(id) {
   const p = state.data.result.results.find((r) => r.policy_id === id);
   if (!p) return;
@@ -503,7 +580,7 @@ function openPolicy(id) {
       <ul class="reasons">${reasonTree(p.reason)}</ul>
     </div>
     ${quote ? `<div><p class="section-title" style="margin:0 0 8px">자격요건 원문</p><div class="quote">${esc(quote)}</div></div>` : ""}
-    ${p.source_url ? `<a class="btn ghost" href="${esc(p.source_url)}" target="_blank" rel="noopener" style="text-align:center;text-decoration:none;line-height:28px">공고 출처 보기</a>` : ""}
+    ${sourceLink(p)}
   `;
   sheet.hidden = false;
   $(".icon-btn", sheet).focus();
