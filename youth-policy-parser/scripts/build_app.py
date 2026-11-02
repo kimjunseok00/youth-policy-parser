@@ -105,16 +105,30 @@ def build_engine_zip(out: Path) -> str:
     return hashlib.sha256(target.read_bytes()).hexdigest()[:12]
 
 
+def frontend_digest(folder: Path) -> str:
+    """화면 파일(html·css·js 등) 내용의 해시. 파일 이름과 내용이 하나라도 바뀌면 값이 달라진다."""
+    h = hashlib.sha256()
+    for f in sorted(folder.rglob("*")):
+        if f.is_file():
+            h.update(str(f.relative_to(folder)).replace("\\", "/").encode())
+            h.update(f.read_bytes())
+    return h.hexdigest()
+
+
 def build(out: Path) -> None:
     if out.exists():
         shutil.rmtree(out)
     shutil.copytree(PWA_SRC, out, ignore=shutil.ignore_patterns("dist", "*.md"))
+    front = frontend_digest(out)  # Pyodide·엔진을 넣기 전, 화면 파일만의 해시
     files = copy_pyodide(out)
     digest = build_engine_zip(out)
 
-    # 서비스 워커 캐시 이름에 엔진 해시를 넣는다 → 정책 데이터가 바뀌면 사용자 기기의 캐시도 새로 받는다
+    # 서비스 워커 캐시 이름 = 엔진 해시 + 화면 해시.
+    # 정책 데이터가 바뀌거나 화면(CSS·JS)만 바뀌어도 사용자 기기의 캐시를 새로 받게 한다.
+    # (엔진 해시만 쓰면 화면만 고친 배포가 이미 열어 본 기기에 반영되지 않는다)
+    build_id = hashlib.sha256((digest + front).encode()).hexdigest()[:12]
     sw = out / "sw.js"
-    sw.write_text(sw.read_text("utf-8").replace("__BUILD__", digest), "utf-8")
+    sw.write_text(sw.read_text("utf-8").replace("__BUILD__", build_id), "utf-8")
     worker = out / "worker.js"
     worker.write_text(worker.read_text("utf-8").replace("__BUILD__", digest), "utf-8")
 

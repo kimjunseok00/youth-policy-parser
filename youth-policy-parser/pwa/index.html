@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>되나요 — 청년정책 자격 판정</title>
   <meta name="description" content="부산 청년정책, 나도 받을 수 있는지 이유까지 알려주는 앱. 입력한 정보는 기기 밖으로 나가지 않습니다.">
-  <meta name="theme-color" content="#1F3A5F">
+  <meta name="theme-color" content="#FFFFFF">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="되나요">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -29,6 +29,9 @@
     <span class="wordmark">되나요<b>?</b></span>
     <span class="appbar-meta" id="asOf"></span>
   </header>
+
+  <!-- 홈 화면 설치 안내: install.js가 필요한 기기에서만 채워서 보여 준다 -->
+  <aside class="install" id="install" hidden aria-label="앱 설치 안내"></aside>
 
   <main id="main">
     <!-- 처음 실행: 엔진 준비 화면 -->
@@ -54,7 +57,7 @@
       <span>내 정보</span>
     </button>
     <button type="button" data-tab="result">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
       <span>결과</span>
     </button>
     <button type="button" data-tab="more">
@@ -62,7 +65,7 @@
       <span>더 받기</span>
     </button>
     <button type="button" data-tab="schedule">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
       <span>일정</span>
     </button>
   </nav>

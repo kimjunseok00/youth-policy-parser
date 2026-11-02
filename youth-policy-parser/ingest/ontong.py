@@ -19,7 +19,6 @@ from datetime import date
 
 from engine.regions import BUSAN_SIGUNGU
 
-
 _MD_LINK = re.compile(r"\[[^\]]*\]\((https?://[^)\s]+)\)")
 _URL_RE = re.compile(r"(?:https?://)?[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+(?:[/?#]\S*)?")
 
@@ -46,6 +45,7 @@ def clean_url(raw: str | None, fallback: str = "https://www.youthcenter.go.kr") 
     if not url.startswith("https://"):
         url = "https://" + url
     return url
+
 
 NAME_KEYS = ("plcyNm", "plcyNo")  # 이 필드가 있는 dict 목록 = 정책 목록
 

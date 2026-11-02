@@ -7,6 +7,8 @@
 // - 이모티콘을 쓰지 않는다. 판정은 글자 배지(충족·불충족·확인 필요·참고)로 표시한다.
 // - 화면에 넣는 모든 글자는 esc()를 거친다 (정책 데이터에 HTML이 섞여도 실행되지 않게).
 
+import { initInstall } from "./install.js";
+
 const STORE_KEY = "doenayo.v1";
 const BUSAN = "부산광역시";
 const VERDICT = {
@@ -366,7 +368,7 @@ function policyCard(p) {
       <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
       <span class="top">${badge(p.verdict)}${p.is_open ? "" : tag("신청 기간 아님")}</span>
       <span class="name">${esc(p.policy_name)}</span>
-      <span class="meta"><span class="money">${man(p.amount_krw)}</span> · ${esc(p.agency)} · ${esc(period(p))}</span>
+      <span class="meta"><span class="money">${man(p.amount_krw)}</span> · ${esc(p.agency)} · <span class="nw">${esc(period(p))}</span></span>
       <span class="why">${cardWhy(p)}</span>
     </button>`;
 }
@@ -613,3 +615,4 @@ if ("serviceWorker" in navigator && (location.protocol === "https:" || location.
   });
 }
 start();
+initInstall();

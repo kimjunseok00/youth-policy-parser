@@ -11,8 +11,8 @@ import pytest
 from engine.parser import parse
 from engine.schemas import Policy
 from ingest.ontong import (
-    clean_url,
     classify_region,
+    clean_url,
     draft,
     find_items,
     find_total,
