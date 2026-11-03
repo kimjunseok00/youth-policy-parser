@@ -24,12 +24,15 @@ const state = {
   meta: null, // 선택지·예시 인물·기준중위소득 (엔진이 준다)
   form: null, // 입력값 (소득은 '만 원' 단위)
   answers: {}, // 확인 질문 답 {질문: true/false}
+  skipped: [], // '모름'으로 넘긴 질문 원문 (판정에는 영향 없음, 목록에서만 뺀다)
+  last: null, // 방금 바꾼 답 {text, prev, a} — '되돌리기'용
   data: null, // 마지막 판정 결과
   filter: "all",
   withUnknown: false,
   persona: null,
   busy: false,
   moreQuestions: false, // '질문 더 보기'를 펼쳤는지 (다시 그려도 유지)
+  moreAnswered: false, // '내가 답한 질문'을 펼쳤는지
 };
 const asOfParam = new URLSearchParams(location.search).get("as_of"); // 시연용: ?as_of=2026-10-12
 
@@ -120,7 +123,7 @@ function load() {
 }
 function save() {
   try {
-    localStorage.setItem(STORE_KEY, JSON.stringify({ form: state.form, answers: state.answers }));
+    localStorage.setItem(STORE_KEY, JSON.stringify({ form: state.form, answers: state.answers, skipped: state.skipped }));
   } catch {
     /* 사생활 보호 모드 등에서는 기억하지 않고 넘어간다 */
   }
@@ -309,7 +312,7 @@ profileView.addEventListener("click", (e) => {
     const i = Number(chip.dataset.persona);
     state.persona = i;
     state.form = formFromProfile(state.meta.personas[i].profile);
-    state.answers = {};
+    clearAnswers();
     renderProfile();
     judge();
     return;
@@ -396,6 +399,36 @@ function policyCard(p) {
     </button>`;
 }
 
+// 확인 질문 답 관리
+// 한 질문의 상태는 넷 중 하나: yes / no (판정에 반영), skip (모름 — 목록에서만 빼 둠), clear (아직 안 답함)
+function answerOf(text) {
+  if (text in state.answers) return state.answers[text] ? "yes" : "no";
+  return state.skipped.includes(text) ? "skip" : "clear";
+}
+function applyAnswer(text, a) {
+  delete state.answers[text];
+  state.skipped = state.skipped.filter((t) => t !== text);
+  if (a === "yes" || a === "no") state.answers[text] = a === "yes";
+  else if (a === "skip") state.skipped.push(text);
+}
+function clearAnswers() {
+  state.answers = {};
+  state.skipped = [];
+  state.last = null;
+}
+// 답을 바꾸고 다시 그린다. 예/아니오가 바뀐 경우에만 엔진을 다시 돌린다 ('모름'은 판정에 영향이 없다).
+function changeAnswer(text, a, { undo = false } = {}) {
+  const prev = answerOf(text);
+  if (prev === a) return;
+  applyAnswer(text, a);
+  state.last = undo ? null : { text, prev, a };
+  const judged = (x) => x === "yes" || x === "no";
+  if (judged(prev) || judged(a)) return judge({ keepView: true });
+  save();
+  renderResult();
+}
+const ANSWER_LABEL = { yes: "예", no: "아니오", skip: "모름", clear: "다시 묻기" };
+
 // 확인 질문 정렬: 걸린 정책 중 가장 큰 금액 → 걸린 정책 수 순서.
 // data-q에는 엔진이 준 원래 순번을 넣는다 (답을 저장할 때 원래 질문을 찾기 위해).
 function orderedQuestions(qs, results) {
@@ -411,10 +444,28 @@ function questionRow(q) {
     <div class="seg" role="group" aria-label="답">
       <button type="button" data-q="${q.i}" data-a="yes">예</button>
       <button type="button" data-q="${q.i}" data-a="no">아니오</button>
-      <button type="button" data-q="${q.i}" data-a="skip" aria-pressed="true">모름</button>
+      <button type="button" data-q="${q.i}" data-a="skip">모름</button>
     </div>
     <span class="small muted">관련 정책: ${q.policies.map(esc).join(", ")}</span>
   </div>`;
+}
+
+function answeredRow(text) {
+  const cur = answerOf(text);
+  const btn = (a) =>
+    `<button type="button" data-qt="${esc(text)}" data-a="${a}" aria-pressed="${cur === a}">${ANSWER_LABEL[a]}</button>`;
+  return `<div class="question">
+    <p>${esc(text)}</p>
+    <div class="seg" role="group" aria-label="답 바꾸기">${btn("yes")}${btn("no")}${btn("skip")}</div>
+    <button type="button" class="linkish" data-qt="${esc(text)}" data-a="clear">답 취소하고 다시 묻기</button>
+  </div>`;
+}
+function undoBar() {
+  const l = state.last;
+  if (!l) return "";
+  const short = l.text.length > 22 ? `${l.text.slice(0, 22)}…` : l.text;
+  return `<div class="undo"><span>‘${esc(short)}’ → <b>${ANSWER_LABEL[l.a]}</b></span>
+    <button type="button" class="chip" data-undo>되돌리기</button></div>`;
 }
 
 function renderResult() {
@@ -429,7 +480,9 @@ function renderResult() {
   // 충족 정책은 있는데 합계가 0원인 경우: '0원'만 크게 보이면 아무것도 못 받는 것처럼 읽힌다.
   // 그럴 때는 금액 대신 충족 건수를 크게 보여 주고, 합계에 못 넣은 이유를 적는다.
   const noSum = !plan.selected.length && !state.withUnknown && passCount > 0;
-  const qs = data.questions;
+  // 아직 답하지 않은 질문만 (모름으로 넘긴 질문은 '내가 답한 질문'으로 옮긴다)
+  const qs = orderedQuestions(data.questions, results).filter((q) => !state.skipped.includes(q.text));
+  const answered = [...Object.keys(state.answers), ...state.skipped];
 
   $('[data-view="result"]').innerHTML = `
     <div class="card summary accent">
@@ -462,23 +515,28 @@ function renderResult() {
     </div>
 
     ${
-      qs.length || Object.keys(state.answers).length
+      qs.length || answered.length
         ? `<div class="card">
             <h2>확인 질문 ${qs.length}개</h2>
-            <p class="small muted" style="margin:-6px 0 12px">답하면 '확인 필요'가 충족 또는 불충족으로 바로 바뀝니다. 금액이 큰 정책에 걸린 질문부터 보여 드립니다.</p>
-            ${orderedQuestions(qs, results).slice(0, QUESTIONS_FIRST).map(questionRow).join("")}
+            <p class="small muted" style="margin:-6px 0 12px">답하면 '확인 필요'가 충족 또는 불충족으로 바로 바뀝니다. 모르면 '모름'을 눌러 넘기세요. 잘못 눌러도 아래에서 바꿀 수 있습니다.</p>
+            ${undoBar()}
+            ${qs.length ? "" : `<p class="small muted">남은 질문이 없습니다.</p>`}
+            ${qs.slice(0, QUESTIONS_FIRST).map(questionRow).join("")}
             ${
               qs.length > QUESTIONS_FIRST
                 ? `<details class="more-q" ${state.moreQuestions ? "open" : ""}>
                     <summary>나머지 질문 ${qs.length - QUESTIONS_FIRST}개 더 보기</summary>
-                    ${orderedQuestions(qs, results).slice(QUESTIONS_FIRST).map(questionRow).join("")}
+                    ${qs.slice(QUESTIONS_FIRST).map(questionRow).join("")}
                   </details>`
                 : ""
             }
             ${
-              Object.keys(state.answers).length
-                ? `<p class="small muted" style="margin:10px 0 0">이미 답한 질문 ${Object.keys(state.answers).length}개가 반영되어 있습니다.
-                   <button type="button" class="chip" data-reset-answers style="margin-left:6px">답 지우기</button></p>`
+              answered.length
+                ? `<details class="more-q answered" ${state.moreAnswered ? "open" : ""}>
+                    <summary>내가 답한 질문 ${answered.length}개 · 답 바꾸기</summary>
+                    ${answered.map(answeredRow).join("")}
+                    <p style="margin:12px 0 0"><button type="button" class="chip" data-reset-answers>답 모두 지우기</button></p>
+                  </details>`
                 : ""
             }
           </div>`
@@ -503,7 +561,8 @@ function renderResult() {
 $('[data-view="result"]').addEventListener(
   "toggle",
   (e) => {
-    if (e.target.matches?.("details.more-q")) state.moreQuestions = e.target.open;
+    if (e.target.matches?.("details.answered")) state.moreAnswered = e.target.open;
+    else if (e.target.matches?.("details.more-q")) state.moreQuestions = e.target.open;
   },
   true, // toggle 이벤트는 위로 전파되지 않아서 캡처 단계에서 받는다
 );
@@ -521,14 +580,17 @@ $('[data-view="result"]').addEventListener("click", (e) => {
     return renderResult();
   }
   if (t.hasAttribute("data-reset-answers")) {
-    state.answers = {};
+    clearAnswers();
     return judge({ keepView: true });
   }
-  if (t.dataset.q) {
-    const q = state.data.questions[Number(t.dataset.q)].text;
-    if (t.dataset.a === "skip") delete state.answers[q];
-    else state.answers[q] = t.dataset.a === "yes";
-    judge({ keepView: true });
+  if (t.hasAttribute("data-undo")) {
+    const l = state.last;
+    if (l) changeAnswer(l.text, l.prev, { undo: true });
+    return;
+  }
+  if (t.dataset.q || t.dataset.qt) {
+    const text = t.dataset.qt ?? state.data.questions[Number(t.dataset.q)].text;
+    return changeAnswer(text, t.dataset.a);
   }
 });
 
@@ -676,10 +738,10 @@ async function start() {
     return;
   }
   $("#bootBar").style.width = "100%";
-  $("#asOf").textContent = `기준일 ${asOfParam ?? state.meta.as_of}`;
   const saved = load();
   state.form = saved.form ?? formFromProfile(state.meta.personas[0].profile);
   state.answers = saved.answers ?? {};
+  state.skipped = saved.skipped ?? [];
   if (!saved.form) state.persona = 0;
   renderProfile();
   document.querySelector(".tabbar").hidden = false;
